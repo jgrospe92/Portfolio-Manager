@@ -166,3 +166,8 @@ cython_debug/
 
 # macos files
 .DS_Store
+
+# vscode
+client/.vscode
+server/.vscode
+.vscode
