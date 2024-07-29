@@ -1,0 +1,43 @@
+<nav
+  class="navbar navbar-expand-sm bg-body-tertiary app_navbar"
+  data-bs-theme="dark"
+>
+  <div class="container-fluid">
+    <a class="navbar-brand app_navbar__brand" [routerLink]="'.'">
+      <img src="assets/images/logo.png" width="40" height="40" />
+      {{ name }}
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      (click)="isMenuCollapsed = !isMenuCollapsed"
+    >
+      &#9776;
+    </button>
+    <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+      <ul class="nav nav-pills nav_items">
+        <li class="nav-item">
+          <a
+            class=""
+            routerLink="/home"
+            routerLinkActive="active"
+            (click)="isMenuCollapsed = true"
+            >Home</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="ms-3"
+            routerLink="/portfolio"
+            routerLinkActive="active"
+            (click)="isMenuCollapsed = true"
+            >Portfolio</a
+          >
+        </li>
+      </ul>
+    </div>
+    <button type="button" class="btn btn-danger me-3">
+      <span class="navbar-text"> Logout </span>
+    </button>
+  </div>
+</nav>

@@ -1,0 +1,33 @@
+// primary color
+$app-color__font: white;
+$app-color__background: #212529;
+$app-color__primary: #3fd400;
+$app_color_secondary: #158000;
+$app_color_accent: #c80000;
+
+// Hover color
+$app-root_link_hover_text_color: $app-color__font;
+$app_root_link_hover_bg: $app_color_secondary;
+$app_root_link_active_bg: $app-color__primary;
+
+// Link color
+@mixin link-colors($a-tags, $link, $hover, $active) {
+  #{$a-tags} {
+    color: $link;
+
+    &:visited {
+      color: inherit;
+    }
+    &:hover {
+      color: $app-color__font;
+      background-color: $hover;
+    }
+    &:active {
+      color: $active;
+    }
+    &.active {
+      background-color: transparent;
+      color: $app-color__font;
+    }
+  }
+}
