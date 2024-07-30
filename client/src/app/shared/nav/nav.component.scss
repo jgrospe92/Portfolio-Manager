@@ -1,0 +1,15 @@
+@import "../../../assets/scss/color";
+
+.app_navbar {
+  background-color: $app-color__background !important;
+
+  .nav_items {
+    $a-tags: ".app_navbar__item";
+    @include link-colors(
+      $a-tags,
+      $app-root_link_hover_text_color,
+      rgb(129, 42, 42),
+      $app-color__primary
+    );
+  }
+}

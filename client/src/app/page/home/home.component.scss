@@ -1,0 +1,47 @@
+@import "../../../assets/scss/color";
+
+.app_main {
+  height: 100vh;
+  margin: 0%;
+}
+
+.app_header {
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  color: $app-color__font;
+  background-image: url("../../../assets/images/finance_banner.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  &__text {
+    text-align: center;
+    position: absolute;
+    margin: 0;
+    font-size: 5rem;
+    max-width: 16em;
+    font-weight: bold;
+    line-height: 0.9;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    &__hero_text {
+      -webkit-text-stroke-width: 2px;
+      -webkit-text-stroke-color: black;
+    }
+  }
+  &__action {
+    &__btn {
+      position: absolute;
+      top: 30%;
+      left: 48%;
+      font-size: 1.5rem;
+      padding: 0.5em 0.67em;
+      color: white;
+      text-decoration: none;
+      border: 0.1em solid white;
+    }
+  }
+}
