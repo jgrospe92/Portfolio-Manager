@@ -36,8 +36,8 @@
         </li>
       </ul>
     </div>
-    <button type="button" class="btn btn-danger me-3">
-      <span class="navbar-text"> Logout </span>
+    <button type="button" [ngClass]="[btnStyle]" (click)="login()">
+      <span class="navbar-text"> Login </span>
     </button>
   </div>
 </nav>
