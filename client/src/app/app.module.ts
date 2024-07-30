@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http'; 
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -9,8 +9,9 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
 import { NavComponent } from './shared/nav/nav.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PortfolioComponent } from './pages/portfolio/portfolio.component';
-import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import { CommunicationService } from './services/communication.service';
+import { AgGridAngular } from 'ag-grid-angular';
+import { DropdownComponent } from './components/dropdown/dropdown.component';
 
 @NgModule({
   declarations: [
@@ -19,9 +20,15 @@ import { CommunicationService } from './services/communication.service';
     PageNotFoundComponent,
     NavComponent,
     PortfolioComponent,
-    
   ],
-  imports: [BrowserModule, AppRoutingModule, NgbModule, AgGridAngular, HttpClientModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    NgbModule,
+    AgGridAngular,
+    DropdownComponent,
+    HttpClientModule,
+  ],
   providers: [CommunicationService],
   bootstrap: [AppComponent],
 })

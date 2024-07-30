@@ -7,7 +7,8 @@ import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
   styleUrls: ['./portfolio.component.scss'],
 })
 export class PortfolioComponent implements OnInit {
-  // Row Data: The data to be displayed.
+  dropdownItems: string[] = ['High Yield Technology', 'S&P 500'];
+
   rowData = [
     { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
     { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
