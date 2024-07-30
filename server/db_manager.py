@@ -1,31 +1,30 @@
-# db.py
-
-from flask import g
 import mysql.connector
-from mysql.connector import Error
+from mysql.connector import errorcode
 
-# Database configuration
-DB_CONFIG = {
+# Add your database connection details
+db_config = {
     'user': 'root',
     'password': 'my-secret-pw',
     'host': '127.0.0.1',
-    'port':'3306',
-    'database': 'Portfolio_Management'
+    'database': 'Portfolio_Management',
+    'raise_on_warnings': True
 }
 
 def get_db():
-    if 'db' not in g:
-        try:
-            g.db = mysql.connector.connect(**DB_CONFIG)
-        except Error as e:
-            print(f"Error connecting to MySQL database: {e}")
-    return g.db
+    try:
+        db = mysql.connector.connect(**db_config)
+        return db
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
 
-def close_db(e=None):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
-        
+def close_db(db):
+    db.close()
+
 # Function to add a user
 def add_user(username, password, email):
     db = get_db()
@@ -53,17 +52,24 @@ def delete_user(user_id):
         close_db(db)
 
 # Function to update a user's email
-def update_user_email(user_id, new_email):
+def update_user(user_id, new_data):
+    # To be implemented later once done on the client side
+    return
+
+# Function to get all users
+def get_all_users():
     db = get_db()
-    cursor = db.cursor()
+    cursor = db.cursor(dictionary=True)
     try:
-        cursor.execute("UPDATE Users SET email = %s WHERE user_id = %s", (new_email, user_id))
-        db.commit()
+        cursor.execute("SELECT * FROM Users")
+        users = cursor.fetchall()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
+        users = []
     finally:
         cursor.close()
         close_db(db)
+    return users
 
 # Function to add a portfolio
 def add_portfolio(user_id, name, description):
@@ -93,16 +99,22 @@ def delete_portfolio(portfolio_id):
 
 # Function to update a portfolio's name
 def update_portfolio_name(portfolio_id, new_name):
+    # To be implemented later once done on the client side
+    return
+
+# Function to get all portfolios
+def get_all_portfolios():
     db = get_db()
-    cursor = db.cursor()
+    cursor = db.cursor(dictionary=True)
     try:
-        cursor.execute("UPDATE Portfolios SET name = %s WHERE portfolio_id = %s", (new_name, portfolio_id))
-        db.commit()
+        cursor.execute("SELECT * FROM Portfolios")
+        portfolios = cursor.fetchall()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
+        portfolios = []
     finally:
         cursor.close()
-        close_db(db)
+        
 
 # Function to add an asset
 def add_asset(name, type, ticker_symbol):
@@ -129,7 +141,7 @@ def delete_asset(asset_id):
     finally:
         cursor.close()
         close_db(db)
-
+        
 # Function to update an asset's name
 def update_asset_name(asset_id, new_name):
     db = get_db()
@@ -142,3 +154,4 @@ def update_asset_name(asset_id, new_name):
     finally:
         cursor.close()
         close_db(db)
+       

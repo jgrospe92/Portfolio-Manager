@@ -1,10 +1,8 @@
-# app.py
-
 from flask import Flask, request, jsonify
 from db_manager import *
 
 app = Flask(__name__)
-    
+
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
@@ -15,6 +13,17 @@ def create_user():
         add_user(username, password, email)
         response = jsonify(message="User added successfully")
         response.status_code = 201
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+@app.route('/users', methods=['GET'])
+def retrieve_users():
+    try:
+        users = get_all_users()
+        response = jsonify(users)
+        response.status_code = 200
     except Exception as e:
         response = jsonify(message=str(e))
         response.status_code = 400
@@ -59,6 +68,17 @@ def create_portfolio():
         response.status_code = 400
     return response
 
+@app.route('/portfolios', methods=['GET'])
+def retrieve_portfolios():
+    try:
+        portfolios = get_all_portfolios()
+        response = jsonify(portfolios)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
 @app.route('/portfolios/<int:portfolio_id>', methods=['DELETE'])
 def remove_portfolio(portfolio_id):
     try:
@@ -93,6 +113,17 @@ def create_asset():
         add_asset(name, type, ticker_symbol)
         response = jsonify(message="Asset added successfully")
         response.status_code = 201
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+@app.route('/assets', methods=['GET'])
+def retrieve_assets():
+    try:
+        assets = get_all_assets()
+        response = jsonify(assets)
+        response.status_code = 200
     except Exception as e:
         response = jsonify(message=str(e))
         response.status_code = 400
