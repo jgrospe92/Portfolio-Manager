@@ -8,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 export class NavComponent implements OnInit {
   name: string = 'Portfolio Manager';
 
+  isLogin: boolean = false;
+  btnStyle: string = 'btn btn-success me-3';
+
   isMenuCollapsed: boolean = true;
 
   constructor() {}
 
   ngOnInit(): void {}
+
+  login() {
+    alert('Not yet implemented');
+  }
 }
