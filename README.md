@@ -39,7 +39,7 @@
   npm install
   npm start
   ```
-  - It will provide you the link to use it locally
+- It will provide you the link to use it locally
 
 ## Team 2
 - Jeffrey Grospe
