@@ -6,7 +6,8 @@
   - [Tech Stacks 💻](#tech-stacks-)
     - [Front End](#front-end)
     - [Back End](#back-end)
-  - [How to Run the app](#how-to-run-the-app)
+    - [Database Schema](#database-schema)
+  - [How to Run the app TODO : Add instruction on how to start/setup the backend server](#how-to-run-the-app-todo--add-instruction-on-how-to-startsetup-the-backend-server)
   - [Team 2](#team-2)
 
 ## Description 📖
@@ -25,11 +26,14 @@
 - Material UI & Bootstrap
   
 ### Back End
- - Python
+- Python
 - Flask
 
+### Database Schema
+- TODO
 
-## How to Run the app
+
+## How to Run the app TODO : Add instruction on how to start/setup the backend server
 - Please do these following command
   ```
   npm install
