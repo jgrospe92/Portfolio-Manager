@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
+import { IAsset } from 'src/app/models/Asset.model';
 
 @Component({
   selector: 'app-portfolio',
@@ -8,21 +8,110 @@ import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 })
 export class PortfolioComponent implements OnInit {
   dropdownItems: string[] = ['High Yield Technology', 'S&P 500'];
+  rowData: IAsset[] = [];
 
-  rowData = [
-    { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
-    { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
-    { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
+  // TODO : replace with actual data coming from the backed
+  portfolioData1: IAsset[] = [
+    {
+      id: 1,
+      name: 'Tesla',
+      type: 'Motor Vehicles',
+      ticker: 'TSLA',
+      qty: 20,
+      price: 200.5,
+      PL: 1000,
+      marketPrice: 250.5,
+    },
+    {
+      id: 2,
+      name: 'Amazon',
+      type: 'Technology',
+      ticker: 'AMZA',
+      qty: 10,
+      price: 181.71,
+      PL: 1000,
+      marketPrice: 250.5,
+    },
+    {
+      id: 3,
+      name: 'Alphabet Inc',
+      type: 'Technology',
+      ticker: 'GOOG',
+      qty: 200,
+      price: 171.86,
+      PL: 1000,
+      marketPrice: 250.5,
+    },
   ];
 
-  colDefs: ColDef[] = [
-    { field: 'make' },
-    { field: 'model' },
-    { field: 'price' },
-    { field: 'electric' },
+  portfolioData2: IAsset[] = [
+    {
+      id: 4,
+      name: 'Microsoft',
+      type: 'Technology',
+      ticker: 'MSFT',
+      qty: 50,
+      price: 300.25,
+      PL: 1000,
+      marketPrice: 350.5,
+    },
+    {
+      id: 5,
+      name: 'Apple',
+      type: 'Technology',
+      ticker: 'AAPL',
+      qty: 30,
+      price: 150.75,
+      PL: 1000,
+      marketPrice: 200.5,
+    },
+    {
+      id: 6,
+      name: 'Facebook',
+      type: 'Technology',
+      ticker: 'FB',
+      qty: 40,
+      price: 250.5,
+      PL: 1000,
+      marketPrice: 300.75,
+    },
+    {
+      id: 7,
+      name: 'Netflix',
+      type: 'Entertainment',
+      ticker: 'NFLX',
+      qty: 20,
+      price: 500.25,
+      PL: 1000,
+      marketPrice: 600.5,
+    },
+    {
+      id: 8,
+      name: 'Johnson & Johnson',
+      type: 'Pharmaceuticals',
+      ticker: 'JNJ',
+      qty: 25,
+      price: 150.5,
+      PL: 1000,
+      marketPrice: 200.75,
+    },
   ];
 
   constructor() {}
 
   ngOnInit(): void {}
+
+  onSelectedPortfolio(portfolio: string) {
+    switch (portfolio) {
+      case 'High Yield Technology':
+        this.rowData = this.portfolioData1;
+        break;
+      case 'S&P 500':
+        this.rowData = this.portfolioData2;
+        break;
+      default:
+        this.rowData = [];
+        break;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 
@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 })
 export class DropdownComponent implements OnInit {
   @Input() items: string[] = [];
+  @Output() itemSelected = new EventEmitter<string>();
+
   selectedLabel: string = 'Select an item';
   isOpen: boolean = false;
 
@@ -25,5 +27,6 @@ export class DropdownComponent implements OnInit {
   selectItem(item: string) {
     this.selectedLabel = item;
     this.isOpen = false;
+    this.itemSelected.emit(item);
   }
 }

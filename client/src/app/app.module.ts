@@ -12,6 +12,7 @@ import { PortfolioComponent } from './pages/portfolio/portfolio.component';
 import { CommunicationService } from './services/communication.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
+import { DatagridComponent } from './components/datagrid/datagrid.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { DropdownComponent } from './components/dropdown/dropdown.component';
     PageNotFoundComponent,
     NavComponent,
     PortfolioComponent,
+    DatagridComponent,
   ],
   imports: [
     BrowserModule,
