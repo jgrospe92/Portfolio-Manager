@@ -1,10 +1,12 @@
 <!-- The AG Grid component -->
 <div>
   <h2>Portfolio Manager</h2>
+  <div class="container">
+    <ag-grid-angular
+      class="ag-theme-quartz"
+      style="height: 500px"
+      [rowData]="rowData"
+      [columnDefs]="colDefs"
+    ></ag-grid-angular>
+  </div>
 </div>
-<ag-grid-angular
-  class="ag-theme-quartz"
-  style="height: 500px"
-  [rowData]="rowData"
-  [columnDefs]="colDefs"
-></ag-grid-angular>
