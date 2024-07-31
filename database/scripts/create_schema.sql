@@ -10,6 +10,18 @@ CREATE DATABASE `Portfolio_Management`;
 
 use `Portfolio_Management`;
 
+-- Create Stock Data Table 
+CREATE TABLE stockData (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    Date DATE,
+    ticker VARCHAR(10),
+    Open FLOAT,
+    Price FLOAT,
+    Volume BIGINT,
+    Daily_PnL FLOAT,
+    Cumulative_PnL FLOAT
+);
+
 -- Create Users table
 CREATE TABLE Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,

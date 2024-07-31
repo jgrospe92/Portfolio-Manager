@@ -1,32 +1,22 @@
+def install(package):
+    import subprocess
+    import sys
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+    
 def main():
-    try:
-        import yfinance as yf
-        import pandas as pd
-        import numpy as np
-        import plotly
-        import os
-    except ImportError:
-        import pip
-        pip.main(['install', '--user', 'yfinance'])
-        pip.main(['install', '--user', 'pandas'])
-        pip.main(['install', '--user', 'numpy'])
-        pip.main(['install', '--user', 'plotly'])
-        import yfinance
-        import pandas as pd
-        import numpy as np
-        import plotly
-        import os
+    import yfinance as yf
+    import pandas as pd
 
-    tickers_and_values = {
-        'AAPL': 2600,
-        'NVDA': 700,
-        'MSFT': 1800,
-        'SPY': 5000,
-        'META': 1300
-    }
+    tickers = ['AAPL', 'NVDA', 'MSFT', 'AMZN', 'GOOGL', 'TSLA', 'JNJ', 'SPY', 'TLT', 'BIL', 'BTC']
 
-    df = pd.concat([yf.download(ticker, group_by="Ticker", period = "5y", interval = "1d").assign(ticker=ticker) for ticker in tickers_and_values.keys()], ignore_index=False)
+    df = pd.concat([yf.download(ticker, group_by="Ticker", period = "5y", interval = "1d").assign(ticker=ticker) for ticker in tickers], ignore_index=False).reset_index()
+    df.rename(columns={'level_1': 'Date', 'Adj Close': 'Price'}, inplace=True)
+    df = df[['Date', 'ticker', 'Open', 'Price', 'Volume']]
+    position = 100
+    df['Daily PnL'] = df.groupby('ticker')['Price'].diff() * position
+    df['Cumulative PnL'] = df.groupby('ticker')['Daily PnL'].cumsum()
     df.to_csv('./database/scripts/data_snapshot.csv')    
               
 if __name__ == "__main__":
+    install('yfinance')
     main()
