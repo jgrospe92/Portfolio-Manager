@@ -13,6 +13,8 @@ import { CommunicationService } from './services/communication.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { DatagridComponent } from './components/datagrid/datagrid.component';
+import { DynamicBtnComponent } from './components/dynamic-btn/dynamic-btn.component';
+import { ModalComponent } from './components/modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { DatagridComponent } from './components/datagrid/datagrid.component';
     NavComponent,
     PortfolioComponent,
     DatagridComponent,
+    DynamicBtnComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,

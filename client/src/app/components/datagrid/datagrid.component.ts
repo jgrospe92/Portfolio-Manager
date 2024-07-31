@@ -1,6 +1,29 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
+import { ColDef, ICellRendererParams } from 'ag-grid-community'; // Column Definition Type Interface
 import { IAsset } from 'src/app/models/Asset.model';
+import { ICellRendererAngularComp } from 'ag-grid-angular';
+
+// Custom Button Component
+@Component({
+  standalone: true,
+  template: `<div
+    type="button"
+    class="btn btn-danger btn-sm"
+    (click)="buttonClicked()"
+  >
+    Sell
+  </div>`,
+})
+export class CustomButtonComponent implements ICellRendererAngularComp {
+  agInit(params: ICellRendererParams): void {}
+  refresh(params: ICellRendererParams) {
+    return true;
+  }
+  buttonClicked() {
+    alert('clicked');
+  }
+}
+// End Custom Button Component
 
 @Component({
   selector: 'app-datagrid',
@@ -11,7 +34,7 @@ export class DatagridComponent implements OnInit {
   private gridApi!: any;
   private gridColumnApi!: any;
 
-  @Input() rowData!: IAsset[];
+  @Input() rowData!: any[];
 
   defaultColDef: ColDef = {
     filter: true,
@@ -32,6 +55,11 @@ export class DatagridComponent implements OnInit {
     },
     { field: 'PL', headerName: 'P&L' },
     { field: 'marketPrice', headerName: 'Market Price' },
+    {
+      field: 'sell',
+      headerName: 'Sell',
+      cellRenderer: CustomButtonComponent,
+    },
   ];
 
   constructor() {}
