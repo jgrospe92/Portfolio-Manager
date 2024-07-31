@@ -72,10 +72,10 @@ def create_portfolio():
         response.status_code = 400
     return response
 
-@app.route('/portfolios', methods=['GET'])
-def retrieve_portfolios():
+@app.route('/portfolios/<int:user_id>', methods=['GET'])
+def retrieve_portfolios(user_id):
     try:
-        portfolios = get_all_portfolios()
+        portfolios = get_all_portfolios(user_id)
         response = jsonify(portfolios)
         response.status_code = 200
     except Exception as e:
@@ -122,10 +122,10 @@ def create_asset():
         response.status_code = 400
     return response
 
-@app.route('/assets', methods=['GET'])
-def retrieve_assets():
+@app.route('/assets/<int:portfolio_id>', methods=['GET'])
+def retrieve_assets(portfolio_id):
     try:
-        assets = get_all_assets()
+        assets = get_assets_by_portfolio_id(portfolio_id)
         response = jsonify(assets)
         response.status_code = 200
     except Exception as e:

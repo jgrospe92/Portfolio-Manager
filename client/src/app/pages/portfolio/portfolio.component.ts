@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IAsset } from 'src/app/models/Asset.model';
+import { Portfolio } from 'src/app/models/Portfolio.model';
+import { CommunicationService } from 'src/app/services/communication.service';
 
 @Component({
   selector: 'app-portfolio',
@@ -8,110 +10,40 @@ import { IAsset } from 'src/app/models/Asset.model';
 })
 export class PortfolioComponent implements OnInit {
   dropdownItems: string[] = ['High Yield Technology', 'S&P 500'];
-  rowData: IAsset[] = [];
+  rowData: any[] = [];
+  portfolios: Portfolio[] = [];
+  current_user: number = 1;
 
-  // TODO : replace with actual data coming from the backed
-  portfolioData1: IAsset[] = [
-    {
-      id: 1,
-      name: 'Tesla',
-      type: 'Motor Vehicles',
-      ticker: 'TSLA',
-      qty: 20,
-      price: 200.5,
-      PL: 1000,
-      marketPrice: 250.5,
-    },
-    {
-      id: 2,
-      name: 'Amazon',
-      type: 'Technology',
-      ticker: 'AMZA',
-      qty: 10,
-      price: 181.71,
-      PL: 1000,
-      marketPrice: 250.5,
-    },
-    {
-      id: 3,
-      name: 'Alphabet Inc',
-      type: 'Technology',
-      ticker: 'GOOG',
-      qty: 200,
-      price: 171.86,
-      PL: 1000,
-      marketPrice: 250.5,
-    },
-  ];
+  constructor(private communication: CommunicationService) {}
 
-  portfolioData2: IAsset[] = [
-    {
-      id: 4,
-      name: 'Microsoft',
-      type: 'Technology',
-      ticker: 'MSFT',
-      qty: 50,
-      price: 300.25,
-      PL: 1000,
-      marketPrice: 350.5,
-    },
-    {
-      id: 5,
-      name: 'Apple',
-      type: 'Technology',
-      ticker: 'AAPL',
-      qty: 30,
-      price: 150.75,
-      PL: 1000,
-      marketPrice: 200.5,
-    },
-    {
-      id: 6,
-      name: 'Facebook',
-      type: 'Technology',
-      ticker: 'FB',
-      qty: 40,
-      price: 250.5,
-      PL: 1000,
-      marketPrice: 300.75,
-    },
-    {
-      id: 7,
-      name: 'Netflix',
-      type: 'Entertainment',
-      ticker: 'NFLX',
-      qty: 20,
-      price: 500.25,
-      PL: 1000,
-      marketPrice: 600.5,
-    },
-    {
-      id: 8,
-      name: 'Johnson & Johnson',
-      type: 'Pharmaceuticals',
-      ticker: 'JNJ',
-      qty: 25,
-      price: 150.5,
-      PL: 1000,
-      marketPrice: 200.75,
-    },
-  ];
+  ngOnInit(): void {
+    this.communication.getPortfolios(this.current_user).subscribe((portfolios: Portfolio[]) => {
+      console.log(portfolios)
+      this.portfolios = portfolios
+      this.dropdownItems = portfolios.map(portfolio => portfolio.name)
+    });
+  }
 
-  constructor() {}
+  setRowData(portfolio_id: number) {
+    this.communication.getPortfolioAssetsByID(portfolio_id).subscribe((assets: any) => {
+      this.rowData =  assets;
+    });
+  }
 
-  ngOnInit(): void {}
-
-  onSelectedPortfolio(portfolio: string) {
-    switch (portfolio) {
-      case 'High Yield Technology':
-        this.rowData = this.portfolioData1;
-        break;
-      case 'S&P 500':
-        this.rowData = this.portfolioData2;
-        break;
-      default:
-        this.rowData = [];
-        break;
+  getPortfolioIdByName(name: string): number {
+    let portfolios = this.portfolios;
+    for (const portfolio of portfolios) {
+        if (portfolio.name === name) {
+            return portfolio.portfolio_id;
+        }
     }
+    return 0; // Return null if no matching portfolio is found
+};
+
+  onSelectedPortfolio(portfolio_name: string) {
+    const portfolioId = this.getPortfolioIdByName(portfolio_name)
+    console.log(portfolioId)
+    this.setRowData(portfolioId)
+    console.log(this.rowData)
   }
 }

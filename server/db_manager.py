@@ -100,6 +100,26 @@ def delete_portfolio(portfolio_id):
     finally:
         cursor.close()
         close_db(db)
+        
+def get_assets_by_portfolio_id(portfolio_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        query = """
+        SELECT a.asset_id, a.name, a.type, a.ticker_symbol, pa.quantity, pa.average_price
+        FROM Assets a
+        JOIN Portfolio_Assets pa ON a.asset_id = pa.asset_id
+        WHERE pa.portfolio_id = %s
+        """
+        cursor.execute(query, (portfolio_id,))
+        assets = cursor.fetchall()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        assets = []
+    finally:
+        cursor.close()
+        db.close()
+    return assets
 
 # Function to update a portfolio's name
 def update_portfolio_name(portfolio_id, new_name):
@@ -107,17 +127,19 @@ def update_portfolio_name(portfolio_id, new_name):
     return
 
 # Function to get all portfolios
-def get_all_portfolios():
+def get_all_portfolios(user_id):
     db = get_db()
     cursor = db.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM Portfolios")
+        cursor.execute("SELECT * FROM Portfolios WHERE user_id=%s", (user_id,))
         portfolios = cursor.fetchall()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
         portfolios = []
     finally:
         cursor.close()
+        db.close()
+    return portfolios
         
 
 # Function to add an asset

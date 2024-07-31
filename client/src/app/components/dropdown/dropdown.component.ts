@@ -13,7 +13,7 @@ export class DropdownComponent implements OnInit {
   @Input() items: string[] = [];
   @Output() itemSelected = new EventEmitter<string>();
 
-  selectedLabel: string = 'Select an item';
+  selectedLabel: string = 'Select an portfolio';
   isOpen: boolean = false;
 
   constructor() {}

@@ -45,8 +45,16 @@ export class CommunicationService {
     );
   }
 
-  getPortfolios(): Observable<any> {
-    const url = `${this.baseUrl}/portfolios`;
+  getPortfolios(userId: number): Observable<any> {
+    const url = `${this.baseUrl}/portfolios/${userId}`;
+    return this.http.get(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
+  getPortfolioAssetsByID(userId: number): Observable<any> {
+    const url = `${this.baseUrl}/assets/${userId}`;
     return this.http.get(url).pipe(
       catchError(this.handleError)
     );
