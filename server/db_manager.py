@@ -71,6 +71,10 @@ def get_all_users():
         close_db(db)
     return users
 
+def update_user_email():
+    # To be implemented later once done on the client side
+    return 
+
 # Function to add a portfolio
 def add_portfolio(user_id, name, description):
     db = get_db()

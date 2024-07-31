@@ -1,0 +1,11 @@
+<!-- The AG Grid component -->
+<div class="container mt-5">
+  <h2>Portfolio Manager</h2>
+  <app-dropdown
+    [items]="dropdownItems"
+    (itemSelected)="onSelectedPortfolio($event)"
+  ></app-dropdown>
+  <div class="mt-3">
+    <app-datagrid [rowData]="rowData"></app-datagrid>
+  </div>
+</div>

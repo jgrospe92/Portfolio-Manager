@@ -1,7 +1,11 @@
 from flask import Flask, request, jsonify
 from db_manager import *
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
+
 
 @app.route('/users', methods=['POST'])
 def create_user():
@@ -41,11 +45,11 @@ def remove_user(user_id):
     return response
 
 @app.route('/users/<int:user_id>', methods=['PUT'])
-def modify_user_email(user_id):
+def update_user(user_id):
     data = request.get_json()
     new_email = data['email']
     try:
-        update_user_email(user_id, new_email)
+        update_user(user_id, new_email)
         response = jsonify(message="User email updated successfully")
         response.status_code = 200
     except Exception as e:
