@@ -13,12 +13,23 @@ export class DatagridComponent implements OnInit {
 
   @Input() rowData!: IAsset[];
 
+  defaultColDef: ColDef = {
+    filter: true,
+    floatingFilter: true,
+  };
+
   colDefs: ColDef[] = [
     { field: 'name' },
     { field: 'type' },
     { field: 'ticker' },
     { field: 'qty' },
     { field: 'price', headerName: 'Booked Price' },
+    {
+      field: 'totalProfit',
+      headerName: 'Total Profit',
+      valueGetter: (params) => params.data.qty * params.data.price,
+      valueFormatter: (params) => params.value.toFixed(2),
+    },
     { field: 'PL', headerName: 'P&L' },
     { field: 'marketPrice', headerName: 'Market Price' },
   ];
