@@ -1,11 +1,14 @@
 from flask import Flask, request, jsonify
 from db_manager import *
 from flask_cors import CORS
-
+import yfinance as yf
+import matplotlib.pyplot as plt
+import pandas as pd
+import io
+import base64
 
 app = Flask(__name__)
 CORS(app)
-
 
 @app.route('/users', methods=['POST'])
 def create_user():
@@ -156,6 +159,56 @@ def modify_asset_name(asset_id):
         response = jsonify(message=str(e))
         response.status_code = 400
     return response
+
+### Buy and Sell
+@app.route('/stocks/<ticker>', methods=['GET'])
+def get_stock_data(ticker):
+    try:
+        stock = yf.Ticker(ticker)
+        data = stock.history(period="1d")
+        response = jsonify(data.to_dict(orient='records'))
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code=400
+    return response
+
+@app.route('/buy', methods=['POST'])
+def buy_stock():
+    data = request.get_json()
+    user_id = data['user_id']
+    ticker = data['ticker']
+    volume = data['volume']
+    price = get_real_time_price(ticker)
+    try:
+        buy_asset(user_id, ticker, volume, price)
+        response = jsonify(message='Stock Bought Successfully')
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+@app.route('/sell', methods=['POST'])
+def sell_stock():
+    data = request.get_json()
+    user_id = data['user_id']
+    ticker = data['ticker']
+    volume = data['volume']
+    price = get_real_time_price(ticker)
+    try:
+        sell_asset(user_id, ticker, volume, price)
+        response = jsonify(message='Stock Sold Successfully')
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+def get_real_time_price(ticker):
+    stock = yf.Ticker(ticker)
+    data = stock.history(period='1d')
+    return data['Adj Close'].iloc[-1]
 
 if __name__ == '__main__':
     app.run(debug=True)

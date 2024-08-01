@@ -10,18 +10,6 @@ CREATE DATABASE `Portfolio_Management`;
 
 use `Portfolio_Management`;
 
--- Create Stock Data Table 
-CREATE TABLE stockData (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    Date DATE,
-    ticker VARCHAR(10),
-    Open FLOAT,
-    Price FLOAT,
-    Volume BIGINT,
-    Daily_PnL FLOAT,
-    Cumulative_PnL FLOAT
-);
-
 -- Create Users table
 CREATE TABLE Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,18 +38,18 @@ CREATE TABLE Assets (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Transactions table
-CREATE TABLE Transactions (
-    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
-    portfolio_id INT NOT NULL,
-    asset_id INT NOT NULL,
-    transaction_type VARCHAR(10) NOT NULL,
-    quantity DECIMAL(18, 8) NOT NULL,
-    price_per_unit DECIMAL(18, 8) NOT NULL,
-    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (portfolio_id) REFERENCES Portfolios(portfolio_id),
-    FOREIGN KEY (asset_id) REFERENCES Assets(asset_id)
-);
+-- -- Create Transactions table
+-- CREATE TABLE Transactions (
+--     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+--     portfolio_id INT NOT NULL,
+--     asset_id INT NOT NULL,
+--     transaction_type VARCHAR(10) NOT NULL,
+--     quantity DECIMAL(18, 8) NOT NULL,
+--     price_per_unit DECIMAL(18, 8) NOT NULL,
+--     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (portfolio_id) REFERENCES Portfolios(portfolio_id),
+--     FOREIGN KEY (asset_id) REFERENCES Assets(asset_id)
+-- );
 
 -- Create Portfolio_Assets table
 CREATE TABLE Portfolio_Assets (
@@ -82,4 +70,38 @@ CREATE TABLE Asset_Prices (
     price DECIMAL(18, 8) NOT NULL,
     price_date datetime default(curdate()),
     FOREIGN KEY (asset_id) REFERENCES Assets(asset_id)
+);
+
+-- Create Stock Data Table 
+CREATE TABLE stockData (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    Date DATE,
+    ticker VARCHAR(10),
+    Open FLOAT,
+    Price FLOAT,
+    Volume BIGINT,
+    Daily_PnL FLOAT,
+    Cumulative_PnL FLOAT
+);
+
+-- Create Holdings Table 
+CREATE TABLE Holdings (
+    holding_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    ticker VARCHAR(10) NOT NULL,
+    volume INT NOT NULL,
+    average_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- Create Transactions Table
+CREATE TABLE Transactions (
+    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    ticker VARCHAR(10) NOT NULL,
+    volume INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    type ENUM('buy', 'sell') NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
