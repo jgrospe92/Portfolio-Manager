@@ -110,4 +110,8 @@ export class ModalComponent implements OnInit {
     this.gridApi = params.api;
     this.gridApi.sizeColumnsToFit();
   }
+
+  onSearch(event: any) {
+    this.gridApi.setQuickFilter(event.target.value);
+  }
 }
