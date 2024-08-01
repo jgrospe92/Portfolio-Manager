@@ -158,4 +158,56 @@ def update_asset_name(asset_id, new_name):
     finally:
         cursor.close()
         close_db(db)
-       
+
+### Buy and Sell 
+def add_transaction(user_id, ticker, volume, price, type):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("INSERT INTO Transactions (user_id, ticker, volume, price, type) VALUES (%s, %s, %s, %s, %s)", 
+                       (user_id, ticker, volume, price, type))
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        cursor.close()
+        close_db(db)
+
+def update_holdings(user_id, ticker, volume, price, type):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT * FROM Holdings WHERE user_id = %s AND ticker = %s", (user_id, ticker))
+        holding = cursor.fetchone()
+        if holding:
+            current_volume = holding['volume']
+            current_price = holding['price']
+            if type == 'buy':
+                new_volume = current_volume + volume
+                new_price = ((current_price * current_volume) + (price * volume)) / new_volume
+            elif type == 'sell':
+                new_volume = current_volume - volume
+                new_price = current_price
+            if new_volume == 0:
+                cursor.execute("DELETE FROM Holdings WHERE user_id = %s AND ticker = %s", (user_id, ticker))
+            else:
+                cursor.execute("UPDATE Holdings SET volume = %s, average_price = %s WHERE user_id = %s AND ticker = %s",
+                               (new_volume, new_price, user_id, ticker))
+        else:
+            if type == 'buy':
+                cursor.execute("INSERT INTO Holdings (user_id, ticker, volume, average_price) VALUES (%s, %s, %s, %s)",
+                               (user_id, ticker, volume, price))
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        cursor.close()
+        close_db(db)
+
+def buy_asset(user_id, ticker, volume, price):
+    add_transaction(user_id, ticker, volume, price, 'buy')
+    update_holdings(user_id, ticker, volume, price, 'buy')
+
+def sell_asset(user_id, ticker, volume, price):
+    add_transaction(user_id, ticker, volume, price, 'sell')
+    update_holdings(user_id, ticker, volume, price, 'sell')
