@@ -5,12 +5,7 @@
       <app-date-and-time></app-date-and-time>
     </div>
 
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="d('Cross click')"
-    ></button>
+    <button type="button" class="btn-close" (click)="d('Cross click')"></button>
   </div>
   <div class="modal-body">
     <p>Market Data</p>
@@ -18,7 +13,6 @@
       <input
         type="text"
         class="form-control"
-        aria-label="Sizing example input"
         aria-describedby="inputGroup-sizing-sm"
         placeholder="Search for name or ticker symbol"
         (input)="onSearch($event)"
@@ -48,7 +42,7 @@
 
 <app-dynamic-btn
   dynamicStyle="btn btn-success"
-  btnText="Buy"
+  btnText="Buy Assets"
   [disabled]="!isBuyValid"
   (btnClick)="open(content)"
 ></app-dynamic-btn>

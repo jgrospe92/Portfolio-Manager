@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import {
   NgbModal,
   NgbModalConfig,
@@ -7,19 +15,103 @@ import {
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, ICellRendererParams } from 'ag-grid-community'; // Column Definition Type Interface
 import { IAsset } from 'src/app/models/Asset.model';
+import { DropdownComponent } from '../dropdown/dropdown.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 // Custom Button Component
 @Component({
   standalone: true,
-  template: `<div
-    type="button"
-    class="btn btn-success btn-sm"
-    (click)="buttonClicked()"
-  >
-    Buy
-  </div>`,
+  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./modal.component.scss'],
+  template: `<ng-template #content let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title">Order Entry</h4>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="modal.dismiss('Cross click')"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex">
+          <p>{{ stockNameAndTicker.toUpperCase() }}</p>
+          <p class="stockPrice ms-2">{{ price }}</p>
+        </div>
+        <div class="app_buy_layout row align-items-center">
+          <div class="col-auto">
+            <label for="qty" class="col-form-label">QTY: </label>
+          </div>
+          <div class="col-auto app_buy_layout__qtyForm">
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              aria-describedby="qty"
+              id="qty"
+              [(ngModel)]="quantity"
+              (input)="calculateTotal()"
+              min="0"
+            />
+          </div>
+          <div class="col-auto">
+            <label class="col-form-label">Account: </label>
+          </div>
+          <div class="col-auto">
+            <select class="form-select" aria-label="account">
+              <option *ngFor="let account of accounts" [value]="account">
+                {{ account }}
+              </option>
+            </select>
+          </div>
+          <div class="col-auto">
+            <label class="col-form-label">Total: {{ totalAmount }} </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer app_buy_footer">
+        <div>
+          <p>Available Balance: {{ userBalance }}</p>
+        </div>
+        <div class="">
+          <button
+            type="button"
+            class="btn btn-success btn-sm me-2"
+            [disabled]="quantity === 0 || totalAmount > userBalance"
+            (click)="sendOrder()"
+          >
+            Send Order
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary  btn-sm"
+            (click)="modal.close('Close click')"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </ng-template>
+    <div type="button" class="btn btn-success btn-sm" (click)="openBuyWindow()">
+      Buy
+    </div>`,
+  imports: [DropdownComponent, CommonModule, FormsModule],
 })
 export class CustomButtonComponent implements ICellRendererAngularComp {
+  @ViewChild('content', { static: true })
+  content!: TemplateRef<any>;
+  modalRef!: NgbModalRef;
+  // TODO: replace with the actual data coming from DB
+  stockNameAndTicker: string = 'Apple Inc (AAPL)';
+  // TODO: replace with the actual data
+  // use the data from the portfolio component
+  accounts: string[] = ['High Yield Technology', 'S&P 500'];
+  price: number = 150.0;
+  quantity: number = 0;
+  userBalance: number = 5000.0;
+  totalAmount: number = 0;
+
+  constructor(private modalService: NgbModal) {}
   agInit(params: ICellRendererParams): void {
     this.params = params;
   }
@@ -27,10 +119,40 @@ export class CustomButtonComponent implements ICellRendererAngularComp {
     this.params = params;
     return true;
   }
-  private params: any;
-  buttonClicked() {
-    alert('Buy button clicked');
+  open(content: TemplateRef<any>) {
+    this.modalRef = this.modalService.open(content, {
+      centered: true,
+    });
   }
+  private params: any;
+
+  openBuyWindow() {
+    this.open(this.content);
+  }
+
+  calculateTotal(): void {
+    if (this.quantity < 0) {
+      this.quantity = 0;
+    }
+    this.totalAmount = this.quantity * this.price;
+  }
+
+  // TODO: implement the send order function
+  sendOrder() {
+    alert('Order Sent');
+  }
+
+  // onSelectedPortfolio(portfolio: string) {
+  //   switch (portfolio) {
+  //     case 'High Yield Technology':
+  //       break;
+  //     case 'S&P 500':
+  //       break;
+  //     default:
+
+  //       break;
+  //   }
+  // }
 }
 // End Custom Button Component
 
