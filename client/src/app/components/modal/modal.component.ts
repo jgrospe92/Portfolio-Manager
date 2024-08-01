@@ -1,5 +1,9 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  NgbModal,
+  NgbModalConfig,
+  NgbModalRef,
+} from '@ng-bootstrap/ng-bootstrap';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, ICellRendererParams } from 'ag-grid-community'; // Column Definition Type Interface
 import { IAsset } from 'src/app/models/Asset.model';
@@ -16,12 +20,16 @@ import { IAsset } from 'src/app/models/Asset.model';
   </div>`,
 })
 export class CustomButtonComponent implements ICellRendererAngularComp {
-  agInit(params: ICellRendererParams): void {}
+  agInit(params: ICellRendererParams): void {
+    this.params = params;
+  }
   refresh(params: ICellRendererParams) {
+    this.params = params;
     return true;
   }
+  private params: any;
   buttonClicked() {
-    alert('clicked');
+    alert('Buy button clicked');
   }
 }
 // End Custom Button Component
@@ -38,6 +46,7 @@ export class ModalComponent implements OnInit {
     config.backdrop = 'static';
     config.keyboard = false;
   }
+
   @Input() isBuyValid!: boolean;
   private gridApi!: any;
 
@@ -171,7 +180,11 @@ export class ModalComponent implements OnInit {
     { headerName: 'Ticker', field: 'ticker' },
     { headerName: 'Instrument', field: 'instrument' },
     { headerName: 'Price', field: 'price' },
-    { headerName: 'Buy', field: 'buy', cellRenderer: CustomButtonComponent },
+    {
+      headerName: 'Buy',
+      field: 'buy',
+      cellRenderer: CustomButtonComponent,
+    },
   ];
 
   ngOnInit(): void {}
