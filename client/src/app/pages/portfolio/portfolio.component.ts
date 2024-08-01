@@ -46,4 +46,14 @@ export class PortfolioComponent implements OnInit {
     this.setRowData(portfolioId)
     console.log(this.rowData)
   }
+
+  /**
+   * Description placeholder
+   * Check if any portfolio is selected
+   * TODO: Check if the user has balance > 0
+   * @returns {boolean}
+   */
+  isPortfolioSelected(): boolean {
+    return this.rowData.length > 0;
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, ICellRendererParams } from 'ag-grid-community'; // Column Definition Type Interface
@@ -38,9 +38,11 @@ export class ModalComponent implements OnInit {
     config.backdrop = 'static';
     config.keyboard = false;
   }
+  @Input() isBuyValid!: boolean;
   private gridApi!: any;
 
   // TODO: replace this with the actual data coming from the mock csv file
+  // we can create a service that reads the csv file and returns the data
   rowData: any[] | null = [
     {
       name: 'Apple Inc',
@@ -90,6 +92,78 @@ export class ModalComponent implements OnInit {
       ticker: 'ADBE',
       price: 600,
     },
+    {
+      name: 'Intel Corporation',
+      instrument: 'Stock',
+      ticker: 'INTC',
+      price: 55,
+    },
+    {
+      name: 'NVIDIA Corporation',
+      instrument: 'Stock',
+      ticker: 'NVDA',
+      price: 800,
+    },
+    {
+      name: 'Visa Inc.',
+      instrument: 'Stock',
+      ticker: 'V',
+      price: 250,
+    },
+    {
+      name: 'Mastercard Incorporated',
+      instrument: 'Stock',
+      ticker: 'MA',
+      price: 350,
+    },
+    {
+      name: 'Salesforce.com, Inc.',
+      instrument: 'Stock',
+      ticker: 'CRM',
+      price: 250,
+    },
+    {
+      name: 'PayPal Holdings, Inc.',
+      instrument: 'Stock',
+      ticker: 'PYPL',
+      price: 300,
+    },
+    {
+      name: 'Johnson & Johnson',
+      instrument: 'Stock',
+      ticker: 'JNJ',
+      price: 150,
+    },
+    {
+      name: 'Pfizer Inc.',
+      instrument: 'Stock',
+      ticker: 'PFE',
+      price: 40,
+    },
+    {
+      name: 'Coca-Cola Company',
+      instrument: 'Stock',
+      ticker: 'KO',
+      price: 50,
+    },
+    {
+      name: 'Walmart Inc.',
+      instrument: 'Stock',
+      ticker: 'WMT',
+      price: 130,
+    },
+    {
+      name: 'Procter & Gamble Company',
+      instrument: 'Stock',
+      ticker: 'PG',
+      price: 140,
+    },
+    {
+      name: 'Verizon Communications Inc.',
+      instrument: 'Stock',
+      ticker: 'VZ',
+      price: 60,
+    },
   ];
 
   columnDefs: ColDef[] = [
@@ -113,5 +187,9 @@ export class ModalComponent implements OnInit {
 
   onSearch(event: any) {
     this.gridApi.setQuickFilter(event.target.value);
+  }
+
+  hasRowData(): boolean {
+    return this.gridApi && this.gridApi.getDisplayedRowCount() > 0;
   }
 }

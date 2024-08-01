@@ -1,3 +1,8 @@
-<div type="button" [class]="dynamicStyle" (click)="onClick()">
+<button
+  [disabled]="disabled"
+  type="button"
+  [class]="dynamicStyle"
+  (click)="onClick()"
+>
   {{ btnText }}
-</div>
+</button>

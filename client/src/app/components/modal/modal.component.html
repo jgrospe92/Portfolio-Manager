@@ -43,7 +43,8 @@
 </ng-template>
 
 <app-dynamic-btn
-  class="btn btn-success"
+  dynamicStyle="btn btn-success"
   btnText="Buy"
+  [disabled]="!isBuyValid"
   (btnClick)="open(content)"
 ></app-dynamic-btn>

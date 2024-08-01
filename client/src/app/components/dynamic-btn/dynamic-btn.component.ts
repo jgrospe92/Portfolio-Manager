@@ -8,6 +8,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 export class DynamicBtnComponent implements OnInit {
   @Input() btnText!: string;
   @Input() dynamicStyle!: string;
+  @Input() disabled!: boolean;
   @Output() btnClick = new EventEmitter();
 
   constructor() {}
