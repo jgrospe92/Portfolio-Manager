@@ -10,7 +10,7 @@
   padding: 1rem;
   box-sizing: border-box;
   color: $app-color__font;
-  background-image: url("../../../assets/images/finance_banner.png");
+  background-image: url("../../../assets/images/stock_market_banner.png");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -23,7 +23,7 @@
     max-width: 16em;
     font-weight: bold;
     line-height: 0.9;
-    top: 20%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
 
@@ -35,13 +35,21 @@
   &__action {
     &__btn {
       position: absolute;
-      top: 30%;
+      top: 50%;
       left: 48%;
       font-size: 1.5rem;
       padding: 0.5em 0.67em;
       color: white;
       text-decoration: none;
       border: 0.1em solid white;
+      background: rgb(19, 36, 0);
+      background: linear-gradient(
+        90deg,
+        rgba(19, 36, 0, 1) 0%,
+        rgba(9, 121, 16, 1) 35%,
+        rgba(197, 28, 4, 1) 70%,
+        rgba(255, 0, 0, 1) 100%
+      );
     }
   }
 }
