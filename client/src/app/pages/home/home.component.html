@@ -1,20 +1,22 @@
 <div class="app_main">
   <section class="app_header">
-    <header class="app_header__hero">
-      <div class="app_header__text">
-        <p class="app_header__text__hero_text">
-          Get ready for the future. Start investing!
-        </p>
+    <div class="app_header__layout">
+      <header class="app_header__hero">
+        <div class="app_header__text">
+          <p class="app_header__text__hero_text">
+            Get ready for the future. Start investing!
+          </p>
+        </div>
+      </header>
+      <div class="app_header__action">
+        <button
+          type="button"
+          class="btn btn-success app_header__action__btn"
+          (click)="register()"
+        >
+          SIGN UP
+        </button>
       </div>
-    </header>
-    <div class="app_header__action">
-      <button
-        type="button"
-        class="btn btn-success app_header__action__btn"
-        (click)="register()"
-      >
-        SIGN UP
-      </button>
     </div>
   </section>
 </div>
