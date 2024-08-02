@@ -307,3 +307,89 @@ def update_user_funds(portfolio_id, new_funds):
     finally:
         cursor.close()
         close_db(db)
+        
+# Function to record a transaction with type (BUY or SELL)
+def record_transaction(portfolio_id, asset_id, quantity, price_per_unit, transaction_type):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("""
+            INSERT INTO Transactions (portfolio_id, asset_id, transaction_type, quantity, price_per_unit, transaction_profit)
+            VALUES (%s, %s, %s, %s, %s, 0.00)
+        """, (portfolio_id, asset_id, transaction_type, quantity, price_per_unit))
+        db.commit()
+    except mysql.connector.Error as err:
+        raise Exception(f"Error recording transaction: {err}")
+    finally:
+        cursor.close()
+        close_db(db)
+
+# Function to get portfolio asset details
+def get_portfolio_asset(portfolio_id, asset_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT quantity, average_price 
+            FROM Portfolio_Assets 
+            WHERE portfolio_id = %s AND asset_id = %s
+        """, (portfolio_id, asset_id))
+        portfolio_asset = cursor.fetchone()
+    except mysql.connector.Error as err:
+        raise Exception(f"Error fetching portfolio asset: {err}")
+    finally:
+        cursor.close()
+        close_db(db)
+    return portfolio_asset
+
+# Function to update portfolio assets on sell
+def update_portfolio_assets_on_sell(portfolio_id, asset_id, quantity):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("""
+            SELECT quantity, average_price 
+            FROM Portfolio_Assets 
+            WHERE portfolio_id = %s AND asset_id = %s
+        """, (portfolio_id, asset_id))
+        portfolio_asset = cursor.fetchone()
+
+        if portfolio_asset:
+            current_quantity = portfolio_asset[0]
+            new_quantity = current_quantity - quantity
+            if new_quantity == 0:
+                cursor.execute("""
+                    DELETE FROM Portfolio_Assets
+                    WHERE portfolio_id = %s AND asset_id = %s
+                """, (portfolio_id, asset_id))
+            else:
+                cursor.execute("""
+                    UPDATE Portfolio_Assets 
+                    SET quantity = %s 
+                    WHERE portfolio_id = %s AND asset_id = %s
+                """, (new_quantity, portfolio_id, asset_id))
+
+        db.commit()
+    except mysql.connector.Error as err:
+        raise Exception(f"Error updating portfolio assets on sell: {err}")
+    finally:
+        cursor.close()
+        close_db(db)
+
+# Function to update user funds
+def update_user_funds(portfolio_id, new_funds):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("""
+            UPDATE Users 
+            JOIN Portfolios ON Users.user_id = Portfolios.user_id 
+            SET Users.funds = %s 
+            WHERE Portfolios.portfolio_id = %s
+        """, (new_funds, portfolio_id))
+        db.commit()
+    except mysql.connector.Error as err:
+        raise Exception(f"Error updating user funds: {err}")
+    finally:
+        cursor.close()
+        close_db(db)

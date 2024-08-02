@@ -27,7 +27,7 @@ CREATE TABLE Portfolios (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    profit DECIMAL(18, 8) NOT NULL,
+    profit FLOAT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
@@ -48,10 +48,10 @@ CREATE TABLE Transactions (
     portfolio_id INT NOT NULL,
     asset_id INT NOT NULL,
     transaction_type VARCHAR(10) NOT NULL,
-    quantity DECIMAL(18, 8) NOT NULL,
-    price_per_unit DECIMAL(18, 8) NOT NULL,
+    quantity INT NOT NULL,
+    price_per_unit FLOAT NOT NULL,
     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    transaction_profit DECIMAL(18, 8) NOT NULL,
+    transaction_profit FLOAT NOT NULL,
     FOREIGN KEY (portfolio_id) REFERENCES Portfolios(portfolio_id),
     FOREIGN KEY (asset_id) REFERENCES Assets(asset_id)
 );
@@ -60,8 +60,8 @@ CREATE TABLE Transactions (
 CREATE TABLE Portfolio_Assets (
     portfolio_id INT NOT NULL,
     asset_id INT NOT NULL,
-    quantity DECIMAL(18, 8) NOT NULL,
-    average_price DECIMAL(18, 8) NOT NULL,
+    quantity INT NOT NULL,
+    average_price FLOAT NOT NULL,
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (portfolio_id, asset_id),
     FOREIGN KEY (portfolio_id) REFERENCES Portfolios(portfolio_id),
@@ -72,7 +72,7 @@ CREATE TABLE Portfolio_Assets (
 CREATE TABLE Asset_Prices (
     price_id INT AUTO_INCREMENT PRIMARY KEY,
     asset_id INT NOT NULL,
-    price DECIMAL(18, 8) NOT NULL,
+    price FLOAT NOT NULL,
     price_date datetime default(curdate()),
     FOREIGN KEY (asset_id) REFERENCES Assets(asset_id)
 );
