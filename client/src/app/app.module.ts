@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +14,9 @@ import { CommunicationService } from './services/communication.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { DatagridComponent } from './components/datagrid/datagrid.component';
+import { DynamicBtnComponent } from './components/dynamic-btn/dynamic-btn.component';
+import { ModalComponent } from './components/modal/modal.component';
+import { DateAndTimeComponent } from './components/date-and-time/date-and-time.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +26,9 @@ import { DatagridComponent } from './components/datagrid/datagrid.component';
     NavComponent,
     PortfolioComponent,
     DatagridComponent,
+    DynamicBtnComponent,
+    ModalComponent,
+    DateAndTimeComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,6 +37,7 @@ import { DatagridComponent } from './components/datagrid/datagrid.component';
     AgGridAngular,
     DropdownComponent,
     HttpClientModule,
+    FormsModule,
   ],
   providers: [CommunicationService],
   bootstrap: [AppComponent],

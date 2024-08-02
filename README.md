@@ -36,6 +36,7 @@
 ## How to Run the app TODO : Add instruction on how to start/setup the backend server
 - Please do these following command
   ```
+  cd client
   npm install
   npm start
   ```
