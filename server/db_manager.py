@@ -142,18 +142,7 @@ def get_all_portfolios(user_id):
     return portfolios
         
 
-# Function to add an asset
-def add_asset(name, type, ticker_symbol):
-    db = get_db()
-    cursor = db.cursor()
-    try:
-        cursor.execute("INSERT INTO Assets (name, type, ticker_symbol) VALUES (%s, %s, %s)", (name, type, ticker_symbol))
-        db.commit()
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-    finally:
-        cursor.close()
-        close_db(db)
+
 
 # Function to delete an asset
 def delete_asset(asset_id):
@@ -195,30 +184,71 @@ def add_transaction(user_id, ticker, volume, price, type):
         cursor.close()
         close_db(db)
 
-def update_holdings(user_id, ticker, volume, price, type):
+# Function to add an asset
+def add_asset(name, type, ticker_symbol):
     db = get_db()
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT * FROM Holdings WHERE user_id = %s AND ticker = %s", (user_id, ticker))
-        holding = cursor.fetchone()
-        if holding:
-            current_volume = holding['volume']
-            current_price = holding['price']
-            if type == 'buy':
-                new_volume = current_volume + volume
-                new_price = ((current_price * current_volume) + (price * volume)) / new_volume
-            elif type == 'sell':
-                new_volume = current_volume - volume
-                new_price = current_price
-            if new_volume == 0:
-                cursor.execute("DELETE FROM Holdings WHERE user_id = %s AND ticker = %s", (user_id, ticker))
-            else:
-                cursor.execute("UPDATE Holdings SET volume = %s, average_price = %s WHERE user_id = %s AND ticker = %s",
-                               (new_volume, new_price, user_id, ticker))
-        else:
-            if type == 'buy':
-                cursor.execute("INSERT INTO Holdings (user_id, ticker, volume, average_price) VALUES (%s, %s, %s, %s)",
-                               (user_id, ticker, volume, price))
+        # Check if the asset already exists
+        cursor.execute("SELECT asset_id FROM Assets WHERE ticker_symbol = %s", (ticker_symbol,))
+        asset = cursor.fetchone()
+        
+        if not asset:
+            # If asset does not exist, add it
+            cursor.execute("INSERT INTO Assets (name, type, ticker_symbol) VALUES (%s, %s, %s)", 
+                        (name, type, ticker_symbol))
+            db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        cursor.close()
+        close_db(db)
+
+# Function to get asset ID by ticker symbol
+def get_asset_id(ticker_symbol):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT asset_id FROM Assets WHERE ticker_symbol = %s", (ticker_symbol,))
+        asset = cursor.fetchone()
+        asset_id = asset[0] if asset else None
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        asset_id = None
+    finally:
+        cursor.close()
+        close_db(db)
+    return asset_id
+
+# Function to get user funds by portfolio_id
+def get_user_funds(portfolio_id):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("""
+            SELECT Users.funds 
+            FROM Users 
+            JOIN Portfolios ON Users.user_id = Portfolios.user_id 
+            WHERE Portfolios.portfolio_id = %s
+        """, (portfolio_id,))
+        user_funds = cursor.fetchone()[0]
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        user_funds = 0
+    finally:
+        cursor.close()
+        close_db(db)
+    return user_funds
+
+# Function to record a transaction
+def record_transaction(portfolio_id, asset_id, quantity, price_per_unit):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("""
+            INSERT INTO Transactions (portfolio_id, asset_id, transaction_type, quantity, price_per_unit, transaction_profit)
+            VALUES (%s, %s, 'BUY', %s, %s, 0.00)
+        """, (portfolio_id, asset_id, quantity, price_per_unit))
         db.commit()
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -226,10 +256,54 @@ def update_holdings(user_id, ticker, volume, price, type):
         cursor.close()
         close_db(db)
 
-def buy_asset(user_id, ticker, volume, price):
-    add_transaction(user_id, ticker, volume, price, 'buy')
-    update_holdings(user_id, ticker, volume, price, 'buy')
+# Function to update portfolio assets
+def update_portfolio_assets(portfolio_id, asset_id, quantity, price_per_unit):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("""
+            SELECT quantity, average_price 
+            FROM Portfolio_Assets 
+            WHERE portfolio_id = %s AND asset_id = %s
+        """, (portfolio_id, asset_id))
+        portfolio_asset = cursor.fetchone()
 
-def sell_asset(user_id, ticker, volume, price):
-    add_transaction(user_id, ticker, volume, price, 'sell')
-    update_holdings(user_id, ticker, volume, price, 'sell')
+        if portfolio_asset:
+            current_quantity, current_avg_price = portfolio_asset
+            new_quantity = current_quantity + quantity
+            new_avg_price = (current_avg_price * current_quantity + price_per_unit * quantity) / new_quantity
+            cursor.execute("""
+                UPDATE Portfolio_Assets 
+                SET quantity = %s, average_price = %s 
+                WHERE portfolio_id = %s AND asset_id = %s
+            """, (new_quantity, new_avg_price, portfolio_id, asset_id))
+        else:
+            cursor.execute("""
+                INSERT INTO Portfolio_Assets (portfolio_id, asset_id, quantity, average_price)
+                VALUES (%s, %s, %s, %s)
+            """, (portfolio_id, asset_id, quantity, price_per_unit))
+
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        cursor.close()
+        close_db(db)
+
+# Function to update user funds
+def update_user_funds(portfolio_id, new_funds):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("""
+            UPDATE Users 
+            JOIN Portfolios ON Users.user_id = Portfolios.user_id 
+            SET Users.funds = %s 
+            WHERE Portfolios.portfolio_id = %s
+        """, (new_funds, portfolio_id))
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+    finally:
+        cursor.close()
+        close_db(db)

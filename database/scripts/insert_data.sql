@@ -1,90 +1,95 @@
--- Create a new user
-INSERT INTO Users (username, password, email) 
-VALUES ('john_doe', 'password123', 'john@example.com');
+-- Adding dummy data for Users
+INSERT INTO Users (username, password, email) VALUES 
+('john_doe', 'password123', 'john_doe@example.com'),
+('jane_smith', 'password123', 'jane_smith@example.com'),
+('bob_brown', 'password123', 'bob_brown@example.com');
 
--- Create another new user
-INSERT INTO Users (username, password, email) 
-VALUES ('jane_smith', 'password456', 'jane@example.com');
+-- Adding dummy data for Portfolios
+INSERT INTO Portfolios (user_id, name, description) VALUES 
+(1, 'John\'s Portfolio', 'John\'s primary investment portfolio'),
+(2, 'Jane\'s Portfolio', 'Jane\'s diversified investment portfolio'),
+(3, 'Bob\'s Portfolio', 'Bob\'s retirement investment portfolio');
 
--- Create a new portfolio for the first user
-INSERT INTO Portfolios (user_id, name, description) 
-VALUES (1, 'Retirement Fund', 'Long-term investment portfolio for retirement.');
+-- Adding dummy data for Assets
+INSERT INTO Assets (name, type, ticker_symbol) VALUES 
+('Apple Inc.', 'Stock', 'AAPL'),
+('Tesla Inc.', 'Stock', 'TSLA'),
+('Bitcoin', 'Cryptocurrency', 'BTC'),
+('Gold', 'Commodity', 'XAU');
 
--- Create another portfolio for the first user
-INSERT INTO Portfolios (user_id, name, description) 
-VALUES (1, 'Short-Term Savings', 'Portfolio for short-term savings goals.');
+-- Adding dummy data for Transactions
+INSERT INTO Transactions (portfolio_id, asset_id, transaction_type, quantity, price_per_unit) VALUES 
+(1, 1, 'BUY', 10, 150.00),
+(1, 2, 'BUY', 5, 700.00),
+(2, 3, 'BUY', 1.5, 40000.00),
+(3, 4, 'BUY', 2, 1800.00);
 
--- Create a new asset
-INSERT INTO Assets (name, type, ticker_symbol) 
-VALUES ('Apple Inc.', 'Stock', 'AAPL');
+-- Adding dummy data for Portfolio_Assets
+INSERT INTO Portfolio_Assets (portfolio_id, asset_id, quantity, average_price) VALUES 
+(1, 1, 10, 150.00),
+(1, 2, 5, 700.00),
+(2, 3, 1.5, 40000.00),
+(3, 4, 2, 1800.00);
 
--- Create another asset
-INSERT INTO Assets (name, type, ticker_symbol) 
-VALUES ('Tesla Inc.', 'Stock', 'TSLA');
+-- Adding dummy data for Asset_Prices
+INSERT INTO Asset_Prices (asset_id, price, price_date) VALUES 
+(1, 160.00, '2024-07-01'),
+(1, 155.00, '2024-07-02'),
+(2, 710.00, '2024-07-01'),
+(2, 705.00, '2024-07-02'),
+(3, 42000.00, '2024-07-01'),
+(3, 41500.00, '2024-07-02'),
+(4, 1850.00, '2024-07-01'),
+(4, 1825.00, '2024-07-02');
 
--- Insert to Asset_Prices
-INSERT INTO Asset_Prices (asset_id, price)
-values(1, 224.31);
--- Create another asset
-INSERT INTO Asset_Prices (asset_id, price)
-values(2, 239.20);
+-- Adding more transactions for John Doe
+-- Adding more transactions for John Doe
+INSERT INTO Transactions (portfolio_id, asset_id, transaction_type, quantity, price_per_unit) VALUES 
+(1, 1, 'BUY', 5, 145.00),
+(1, 1, 'SELL', 3, 155.00),
+(1, 2, 'BUY', 2, 710.00),
+(1, 2, 'SELL', 1, 720.00),
+(1, 3, 'BUY', 0.5, 41000.00),
+(1, 3, 'BUY', 0.2, 42000.00),
+(1, 3, 'SELL', 0.3, 42500.00),
+(1, 4, 'BUY', 1, 1820.00),
+(1, 4, 'SELL', 0.5, 1850.00);
 
--- Insert a transaction for buying an asset
-INSERT INTO Transactions (portfolio_id, asset_id, transaction_type, quantity, price_per_unit)
-VALUES (1, 1, 'Buy', 100, 150.00);
+-- Updating Portfolio_Assets for John Doe
+INSERT INTO Portfolio_Assets (portfolio_id, asset_id, quantity, average_price) VALUES 
+(1, 1, 12, 147.00) 
+ON DUPLICATE KEY UPDATE 
+    quantity = VALUES(quantity), 
+    average_price = VALUES(average_price);
 
--- Insert another transaction for selling an asset
-INSERT INTO Transactions (portfolio_id, asset_id, transaction_type, quantity, price_per_unit)
-VALUES (1, 1, 'Sell', 50, 160.00);
+INSERT INTO Portfolio_Assets (portfolio_id, asset_id, quantity, average_price) VALUES 
+(1, 2, 6, 705.00) 
+ON DUPLICATE KEY UPDATE 
+    quantity = VALUES(quantity), 
+    average_price = VALUES(average_price);
 
--- Read all users
-SELECT * FROM Users;
+INSERT INTO Portfolio_Assets (portfolio_id, asset_id, quantity, average_price) VALUES 
+(1, 3, 1.0, 41500.00) 
+ON DUPLICATE KEY UPDATE 
+    quantity = VALUES(quantity), 
+    average_price = VALUES(average_price);
 
--- Read all portfolios for the first user
-SELECT * FROM Portfolios WHERE user_id = 1;
+INSERT INTO Portfolio_Assets (portfolio_id, asset_id, quantity, average_price) VALUES 
+(1, 4, 1.5, 1825.00) 
+ON DUPLICATE KEY UPDATE 
+    quantity = VALUES(quantity), 
+    average_price = VALUES(average_price);
 
--- Read all assets
-SELECT a.*, ap.* FROM Assets as a
-join Asset_Prices as ap on a.asset_id = ap.asset_id;
+-- Adding more asset prices
+INSERT INTO Asset_Prices (asset_id, price, price_date) VALUES 
+(1, 148.00, '2024-07-03'),
+(1, 150.00, '2024-07-04'),
+(2, 715.00, '2024-07-03'),
+(2, 725.00, '2024-07-04'),
+(3, 43000.00, '2024-07-03'),
+(3, 43500.00, '2024-07-04'),
+(4, 1870.00, '2024-07-03'),
+(4, 1900.00, '2024-07-04');
 
--- Read from prices
-select * from Asset_Prices;
+COMMIT;
 
--- Read all transactions for a specific portfolio
-SELECT * FROM Transactions WHERE portfolio_id = 1;
-
--- Update the email of the first user
-UPDATE Users 
-SET email = 'john_doe_new@example.com' 
-WHERE user_id = 1;
-
--- Update the description of a portfolio
-UPDATE Portfolios 
-SET description = 'Updated description for short-term savings.' 
-WHERE portfolio_id = 2;
-
--- Update the quantity of an asset in a portfolio
-UPDATE Portfolio_Assets 
-SET quantity = 50 
-WHERE portfolio_id = 1 AND asset_id = 1;
-
--- Update the price of an asset
-UPDATE Asset_Prices 
-SET price = 150.00 
-WHERE asset_id = 1 AND price_date = '2024-07-20';
-
--- Delete a specific transaction
-DELETE FROM Transactions 
-WHERE transaction_id = 1;
-
--- Delete a specific asset from a portfolio
-DELETE FROM Portfolio_Assets 
-WHERE portfolio_id = 1 AND asset_id = 2;
-
--- Delete a portfolio
-DELETE FROM Portfolios 
-WHERE portfolio_id = 2;
-
--- Delete a user
-DELETE FROM Users 
-WHERE user_id = 2;
