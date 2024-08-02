@@ -1,11 +1,6 @@
 from flask import Flask, request, jsonify
 from db_manager import *
 from flask_cors import CORS
-import yfinance as yf
-import matplotlib.pyplot as plt
-import pandas as pd
-import io
-import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -110,6 +105,54 @@ def modify_portfolio_name(portfolio_id):
         response.status_code = 400
     return response
 
+
+@app.route('/buy', methods=['POST'])
+def buy_asset():
+    data = request.get_json()
+    name = data['name']
+    type = data['type']
+    ticker_symbol = data['ticker_symbol']
+    quantity = float(data['quantity'])
+    portfolio_id = int(data['portfolio_id'])
+    price_per_unit = float(data['price_per_unit'])  # Assuming this is provided in the request
+
+    try:
+        # Ensure asset is added to the Assets table
+        add_asset(name, type, ticker_symbol)
+
+        # Fetch the asset ID
+        asset_id = get_asset_id(ticker_symbol)
+
+        # Calculate total cost
+        total_cost = quantity * price_per_unit
+
+        # Get the user's current funds
+        user_funds = get_user_funds(portfolio_id)
+
+        if user_funds < total_cost:
+            raise Exception("Insufficient funds")
+
+        # Record the transaction
+        record_transaction(portfolio_id, asset_id, quantity, price_per_unit)
+
+        # Update Portfolio_Assets table
+        update_portfolio_assets(portfolio_id, asset_id, quantity, price_per_unit)
+
+        # Deduct the total cost from user's funds
+        new_funds = user_funds - total_cost
+        update_user_funds(portfolio_id, new_funds)
+
+        response = jsonify(message="Asset bought successfully")
+        response.status_code = 201
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+
+    return response
+
+
+
+
 @app.route('/assets', methods=['POST'])
 def create_asset():
     data = request.get_json()
@@ -160,55 +203,46 @@ def modify_asset_name(asset_id):
         response.status_code = 400
     return response
 
-### Buy and Sell
-@app.route('/stocks/<ticker>', methods=['GET'])
-def get_stock_data(ticker):
-    try:
-        stock = yf.Ticker(ticker)
-        data = stock.history(period="1d")
-        response = jsonify(data.to_dict(orient='records'))
-        response.status_code = 200
-    except Exception as e:
-        response = jsonify(message=str(e))
-        response.status_code=400
-    return response
 
-@app.route('/buy', methods=['POST'])
-def buy_stock():
-    data = request.get_json()
-    user_id = data['user_id']
-    ticker = data['ticker']
-    volume = data['volume']
-    price = get_real_time_price(ticker)
-    try:
-        buy_asset(user_id, ticker, volume, price)
-        response = jsonify(message='Stock Bought Successfully')
-        response.status_code = 200
-    except Exception as e:
-        response = jsonify(message=str(e))
-        response.status_code = 400
-    return response
 
 @app.route('/sell', methods=['POST'])
-def sell_stock():
+def sell_asset():
     data = request.get_json()
-    user_id = data['user_id']
-    ticker = data['ticker']
-    volume = data['volume']
-    price = get_real_time_price(ticker)
+    ticker_symbol = data['ticker_symbol']
+    quantity = float(data['quantity'])
+    portfolio_id = int(data['portfolio_id'])
+    price_per_unit = float(data['price_per_unit'])  # Assuming this is provided in the request
+
     try:
-        sell_asset(user_id, ticker, volume, price)
-        response = jsonify(message='Stock Sold Successfully')
-        response.status_code = 200
+        # Fetch the asset ID
+        asset_id = get_asset_id(ticker_symbol)
+
+        # Get current portfolio asset details
+        portfolio_asset = get_portfolio_asset(portfolio_id, asset_id)
+        if not portfolio_asset or portfolio_asset['quantity'] < quantity:
+            raise Exception("Insufficient assets to sell")
+
+        # Calculate total proceeds
+        total_proceeds = quantity * price_per_unit
+
+        # Record the transaction
+        record_transaction(portfolio_id, asset_id, quantity, price_per_unit, 'SELL')
+
+        # Update Portfolio_Assets table
+        update_portfolio_assets_on_sell(portfolio_id, asset_id, quantity)
+
+        # Add the total proceeds to user's funds
+        user_funds = get_user_funds(portfolio_id)
+        new_funds = user_funds + total_proceeds
+        update_user_funds(portfolio_id, new_funds)
+
+        response = jsonify(message="Asset sold successfully")
+        response.status_code = 201
     except Exception as e:
         response = jsonify(message=str(e))
         response.status_code = 400
-    return response
 
-def get_real_time_price(ticker):
-    stock = yf.Ticker(ticker)
-    data = stock.history(period='1d')
-    return data['Adj Close'].iloc[-1]
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
