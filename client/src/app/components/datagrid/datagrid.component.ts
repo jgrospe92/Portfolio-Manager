@@ -21,11 +21,11 @@ export class DatagridComponent implements OnInit {
   colDefs: ColDef[] = [
     { field: 'name' },
     { field: 'type' },
-    { field: 'ticker' },
-    { field: 'qty' },
+    { field: 'ticker_symbol' },
+    { field: 'quantity' },
     { field: 'price', headerName: 'Booked Price' },
     {
-      field: 'totalProfit',
+      field: 'profit',
       headerName: 'Total Profit',
       valueGetter: (params) => params.data.qty * params.data.price,
       valueFormatter: (params) => params.value.toFixed(2),

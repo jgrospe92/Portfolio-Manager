@@ -1,9 +1,6 @@
 from flask import Flask, request, jsonify
 from db_manager import *
 from flask_cors import CORS
-import yfinance as yf
-import matplotlib.pyplot as plt
-import pandas as pd
 import io
 import base64
 
@@ -110,6 +107,54 @@ def modify_portfolio_name(portfolio_id):
         response.status_code = 400
     return response
 
+
+@app.route('/buy', methods=['POST'])
+def buy_asset():
+    data = request.get_json()
+    name = data['name']
+    type = data['type']
+    ticker_symbol = data['ticker_symbol']
+    quantity = float(data['quantity'])
+    portfolio_id = int(data['portfolio_id'])
+    price_per_unit = float(data['price_per_unit'])  # Assuming this is provided in the request
+
+    try:
+        # Ensure asset is added to the Assets table
+        add_asset(name, type, ticker_symbol)
+
+        # Fetch the asset ID
+        asset_id = get_asset_id(ticker_symbol)
+
+        # Calculate total cost
+        total_cost = quantity * price_per_unit
+
+        # Get the user's current funds
+        user_funds = get_user_funds(portfolio_id)
+
+        if user_funds < total_cost:
+            raise Exception("Insufficient funds")
+
+        # Record the transaction
+        record_transaction(portfolio_id, asset_id, quantity, price_per_unit)
+
+        # Update Portfolio_Assets table
+        update_portfolio_assets(portfolio_id, asset_id, quantity, price_per_unit)
+
+        # Deduct the total cost from user's funds
+        new_funds = user_funds - total_cost
+        update_user_funds(portfolio_id, new_funds)
+
+        response = jsonify(message="Asset bought successfully")
+        response.status_code = 201
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+
+    return response
+
+
+
+
 @app.route('/assets', methods=['POST'])
 def create_asset():
     data = request.get_json()
@@ -204,11 +249,6 @@ def sell_stock():
         response = jsonify(message=str(e))
         response.status_code = 400
     return response
-
-def get_real_time_price(ticker):
-    stock = yf.Ticker(ticker)
-    data = stock.history(period='1d')
-    return data['Adj Close'].iloc[-1]
 
 if __name__ == '__main__':
     app.run(debug=True)
