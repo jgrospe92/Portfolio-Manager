@@ -35,9 +35,9 @@ import { FormsModule } from '@angular/forms';
         ></button>
       </div>
       <div class="modal-body">
-        <div class="d-flex">
+        <div class="d-flex flex-column ">
           <p>{{ stockNameAndTicker.toUpperCase() }}</p>
-          <p class="stockPrice ms-2">{{ price }}</p>
+          <p class="stockPrice">Price per share : {{ price }}</p>
         </div>
         <div class="app_buy_layout row align-items-center">
           <div class="col-auto">
@@ -52,6 +52,7 @@ import { FormsModule } from '@angular/forms';
               [(ngModel)]="quantity"
               (input)="calculateTotal()"
               min="0"
+              value="0"
             />
           </div>
           <div class="col-auto">
@@ -102,13 +103,12 @@ export class CustomButtonComponent implements ICellRendererAngularComp {
   content!: TemplateRef<any>;
   modalRef!: NgbModalRef;
   // TODO: replace with the actual data coming from DB
-  stockNameAndTicker: string = 'Apple Inc (AAPL)';
   // TODO: replace with the actual data
-  // use the data from the portfolio component
-  accounts: string[] = ['High Yield Technology', 'S&P 500'];
-  price: number = 150.0;
-  quantity: number = 0;
-  userBalance: number = 5000.0;
+  accounts: string[] = ['High Yield Technology', 'S&P 500']; // use the data from the portfolio component
+  stockNameAndTicker!: string;
+  price!: number;
+  quantity!: number;
+  userBalance!: number;
   totalAmount: number = 0;
 
   constructor(private modalService: NgbModal) {}
@@ -128,13 +128,25 @@ export class CustomButtonComponent implements ICellRendererAngularComp {
 
   openBuyWindow() {
     this.open(this.content);
+    this.instantiateStockData();
+  }
+
+  instantiateStockData() {
+    this.quantity = 0;
+    this.price = this.params.data.price;
+    this.stockNameAndTicker = `${this.params.data.name} (${this.params.data.ticker})`;
+    this.userBalance = 10000; // TODO: replace with the actual data
   }
 
   calculateTotal(): void {
-    if (this.quantity < 0) {
+    if (this.quantity < 0 || !this.validateQuantity()) {
       this.quantity = 0;
     }
     this.totalAmount = this.quantity * this.price;
+  }
+
+  validateQuantity(): boolean {
+    return Number.isInteger(this.quantity);
   }
 
   // TODO: implement the send order function
