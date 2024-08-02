@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -6,11 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  register(): void {
-    alert('Not implemented');
-  }
+  constructor(private router: Router) {}
 
-  constructor() {}
+  register(): void {
+    this.router.navigate(['/portfolio']);
+  }
 
   ngOnInit(): void {}
 }
