@@ -92,20 +92,6 @@ def remove_portfolio(portfolio_id):
         response.status_code = 400
     return response
 
-@app.route('/portfolios/<int:portfolio_id>', methods=['PUT'])
-def modify_portfolio_name(portfolio_id):
-    data = request.get_json()
-    new_name = data['name']
-    try:
-        update_portfolio_name(portfolio_id, new_name)
-        response = jsonify(message="Portfolio name updated successfully")
-        response.status_code = 200
-    except Exception as e:
-        response = jsonify(message=str(e))
-        response.status_code = 400
-    return response
-
-
 @app.route('/buy', methods=['POST'])
 def buy_asset():
     data = request.get_json()
@@ -151,23 +137,6 @@ def buy_asset():
     return response
 
 
-
-
-@app.route('/assets', methods=['POST'])
-def create_asset():
-    data = request.get_json()
-    name = data['name']
-    type = data['type']
-    ticker_symbol = data['ticker_symbol']
-    try:
-        add_asset(name, type, ticker_symbol)
-        response = jsonify(message="Asset added successfully")
-        response.status_code = 201
-    except Exception as e:
-        response = jsonify(message=str(e))
-        response.status_code = 400
-    return response
-
 @app.route('/assets/<int:portfolio_id>', methods=['GET'])
 def retrieve_assets(portfolio_id):
     try:
@@ -178,32 +147,6 @@ def retrieve_assets(portfolio_id):
         response = jsonify(message=str(e))
         response.status_code = 400
     return response
-
-@app.route('/assets/<int:asset_id>', methods=['DELETE'])
-def remove_asset(asset_id):
-    try:
-        delete_asset(asset_id)
-        response = jsonify(message="Asset deleted successfully")
-        response.status_code = 200
-    except Exception as e:
-        response = jsonify(message=str(e))
-        response.status_code = 400
-    return response
-
-@app.route('/assets/<int:asset_id>', methods=['PUT'])
-def modify_asset_name(asset_id):
-    data = request.get_json()
-    new_name = data['name']
-    try:
-        update_asset_name(asset_id, new_name)
-        response = jsonify(message="Asset name updated successfully")
-        response.status_code = 200
-    except Exception as e:
-        response = jsonify(message=str(e))
-        response.status_code = 400
-    return response
-
-
 
 @app.route('/sell', methods=['POST'])
 def sell_asset():
