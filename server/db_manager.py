@@ -324,15 +324,45 @@ def update_user_funds(portfolio_id, new_funds):
         cursor.close()
         close_db(db)
         
+        
+def calculate_realized_profit(portfolio_id, asset_id, price_per_unit, quantity):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("""
+            SELECT average_price 
+            FROM Portfolio_Assets 
+            WHERE portfolio_id = %s AND asset_id = %s
+        """, (portfolio_id, asset_id))
+        result = cursor.fetchone()
+        if result is None:
+            raise Exception("No matching record found in Portfolio_Assets")
+        average_price = result[0]
+        realized_profit = quantity * (price_per_unit - average_price)
+        print(realized_profit)
+        db.commit()
+        return realized_profit
+    except mysql.connector.Error as err:
+        db.rollback()
+        raise Exception(f"Error recording transaction: {err}")
+    finally:
+        cursor.close()
+        close_db(db)
+
+    
+        
 # Function to record a transaction with type (BUY or SELL)
 def record_transaction(portfolio_id, asset_id, quantity, price_per_unit, transaction_type):
     db = get_db()
     cursor = db.cursor()
     try:
+        realized_profit = 0
+        if transaction_type == 'SELL':
+            realized_profit = calculate_realized_profit(portfolio_id, asset_id, price_per_unit, quantity)
         cursor.execute("""
             INSERT INTO Transactions (portfolio_id, asset_id, transaction_type, quantity, price_per_unit, transaction_profit)
-            VALUES (%s, %s, %s, %s, %s, 0.00)
-        """, (portfolio_id, asset_id, transaction_type, quantity, price_per_unit))
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (portfolio_id, asset_id, transaction_type, quantity, price_per_unit, realized_profit))
         db.commit()
     except mysql.connector.Error as err:
         raise Exception(f"Error recording transaction: {err}")

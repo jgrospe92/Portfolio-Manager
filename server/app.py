@@ -130,7 +130,7 @@ def buy_asset():
             raise Exception("Insufficient funds")
 
         # Record the transaction
-        record_transaction(portfolio_id, asset_id, quantity, price_per_unit)
+        record_transaction(portfolio_id, asset_id, quantity, price_per_unit, 'BUY')
 
         # Update Portfolio_Assets table
         update_portfolio_assets(portfolio_id, asset_id, quantity, price_per_unit)
