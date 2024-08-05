@@ -462,3 +462,118 @@ def update_user_funds(portfolio_id, new_funds):
     finally:
         cursor.close()
         close_db(db)
+
+# Function to retrieve real-time market price
+def get_real_time_price(ticker):
+    stock = yf.Ticker(ticker)
+    data = stock.history(period="1d")
+    return float(data['Close'].iloc[-1])
+
+# Function to get realized profit/loss across a portfolio
+def get_realized_profit_loss(portfolio_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT SUM(transaction_profit) as realized_profit_loss
+            FROM Transactions
+            WHERE portfolio_id = %s
+        """, (portfolio_id,))
+        result = cursor.fetchone()
+        if result['realized_profit_loss']:
+            realized_profit_loss = result['realized_profit_loss'] 
+        else:
+            realized_profit_loss = 0.0
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        realized_profit_loss = 0.0
+    finally:
+        cursor.close()
+        close_db(db)
+    return realized_profit_loss
+
+# Function to get unrealized profit/loss across a portfolio
+def get_unrealized_profit_loss(portfolio_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT pa.asset_id, pa.quantity, pa.average_price, a.ticker_symbol
+            FROM Portfolio_Assets pa
+            JOIN Assets a ON pa.asset_id = a.asset_id
+            WHERE pa.portfolio_id = %s
+        """, (portfolio_id,))
+        assets = cursor.fetchall()
+        unrealized_profit_loss = 0.0  
+        for asset in assets:
+            current_price = get_real_time_price(asset['ticker_symbol'])
+            market_value = asset['quantity'] * current_price
+            cost_basis = asset['quantity'] * asset['average_price']
+            unrealized_profit_loss += (market_value - cost_basis)
+        
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        unrealized_profit_loss = 0.0
+    finally:
+        cursor.close()
+        close_db(db)
+    
+    return unrealized_profit_loss
+
+# Function to get realized profit/loss for a single stock
+def get_single_stock_realized(portfolio_id, ticker_symbol):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT asset_id FROM Assets WHERE ticker_symbol = %s", (ticker_symbol,))
+        asset = cursor.fetchone()
+        if not asset:
+            raise Exception(f"No asset found for ticker symbol {ticker_symbol}")
+        asset_id = asset['asset_id']
+        cursor.execute("""
+            SELECT SUM(transaction_profit) as realized_profit_loss
+            FROM Transactions
+            WHERE portfolio_id = %s AND asset_id = %s
+        """, (portfolio_id, asset_id))
+        result = cursor.fetchone()
+        realized_profit_loss = result['realized_profit_loss'] if result['realized_profit_loss'] else 0.0
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        realized_profit_loss = 0.0
+    finally:
+        cursor.close()
+        close_db(db)
+    return realized_profit_loss
+
+# Function to get unrealized profit/loss for a single stock
+def get_single_stock_unrealized(portfolio_id, ticker_symbol):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT asset_id FROM Assets WHERE ticker_symbol = %s", (ticker_symbol,))
+        asset = cursor.fetchone()
+        if not asset:
+            raise Exception(f"No asset found for ticker symbol {ticker_symbol}")
+        asset_id = asset['asset_id']
+        cursor.execute("""
+            SELECT pa.quantity, pa.average_price
+            FROM Portfolio_Assets pa
+            WHERE pa.portfolio_id = %s AND pa.asset_id = %s
+        """, (portfolio_id, asset_id))
+        holding = cursor.fetchone()
+        if holding:
+            quantity = holding['quantity']
+            average_price = holding['average_price']
+            current_price = get_real_time_price(ticker_symbol)
+            market_value = quantity * current_price
+            purchase_cost = quantity * average_price
+            unrealized_profit_loss = market_value - purchase_cost
+        else:
+            unrealized_profit_loss = 0.0
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        unrealized_profit_loss = 0.0
+    finally:
+        cursor.close()
+        close_db(db)
+    return unrealized_profit_loss

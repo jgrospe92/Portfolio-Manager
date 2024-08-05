@@ -199,6 +199,68 @@ def sell_asset():
 
     return response
 
+@app.route('/realized_profit_loss/<int:portfolio_id>', methods=['GET'])
+def realized_profit_loss(portfolio_id):
+    try:
+        profit_loss = get_realized_profit_loss(portfolio_id)
+        response = jsonify(realized_profit_loss=profit_loss)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+@app.route('/unrealized_profit_loss/<int:portfolio_id>', methods=['GET'])
+def unrealized_profit_loss(portfolio_id):
+    try:
+        profit_loss = get_unrealized_profit_loss(portfolio_id)
+        response = jsonify(unrealized_profit_loss=profit_loss)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+@app.route('/realized_profit_loss_single_stock', methods=['POST'])
+def realized_profit_loss_single_stock():
+    data = request.get_json()
+    portfolio_id = data['portfolio_id']
+    ticker_symbol = data['ticker_symbol']
+    try:
+        profit_loss = get_single_stock_realized(portfolio_id, ticker_symbol)
+        response = jsonify(realized_profit_loss=profit_loss)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+@app.route('/unrealized_profit_loss_single_stock', methods=['POST'])
+def unrealized_profit_loss_single_stock():
+    data = request.get_json()
+    portfolio_id = data['portfolio_id']
+    ticker_symbol = data['ticker_symbol']
+    try:
+        profit_loss = get_single_stock_unrealized(portfolio_id, ticker_symbol)
+        response = jsonify(unrealized_profit_loss=profit_loss)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+@app.route('/real_time_price', methods=['GET'])
+def real_time_price():
+    data = request.get_json()
+    ticker_symbol = data['ticker_symbol']
+    try:
+        price = get_real_time_price(ticker_symbol)
+        response = jsonify(price)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
