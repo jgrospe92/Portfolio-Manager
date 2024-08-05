@@ -1,14 +1,15 @@
 -- Adding dummy data for Users
-INSERT INTO Users (username, password, email) VALUES 
-('john_doe', 'password123', 'john_doe@example.com'),
-('jane_smith', 'password123', 'jane_smith@example.com'),
-('bob_brown', 'password123', 'bob_brown@example.com');
+INSERT INTO Users (username,password ,funds, email) VALUES 
+('john_doe', 'password123', 5000.00, 'john_doe@example.com'),
+('jane_smith', 'password123', 1000.00,  'jane_smith@example.com'),
+('bob_brown', 'password123', 2500.00, 'bob_brown@example.com');
 
 -- Adding dummy data for Portfolios
-INSERT INTO Portfolios (user_id, name, description) VALUES 
-(1, 'John\'s Portfolio', 'John\'s primary investment portfolio'),
-(2, 'Jane\'s Portfolio', 'Jane\'s diversified investment portfolio'),
-(3, 'Bob\'s Portfolio', 'Bob\'s retirement investment portfolio');
+-- temporary add 0 as a placeholder for profit
+INSERT INTO Portfolios (user_id, name, description, profit) VALUES 
+(1, 'John\'s Portfolio', 'John\'s primary investment portfolio', 0),
+(2, 'Jane\'s Portfolio', 'Jane\'s diversified investment portfolio', 0),
+(3, 'Bob\'s Portfolio', 'Bob\'s retirement investment portfolio', 0);
 
 -- Adding dummy data for Assets
 INSERT INTO Assets (name, type, ticker_symbol) VALUES 
