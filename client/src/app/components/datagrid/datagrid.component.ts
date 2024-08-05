@@ -1,39 +1,37 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ColDef, ICellRendererParams } from 'ag-grid-community'; // Column Definition Type Interface
-import { IAsset } from 'src/app/models/Asset.model';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-
-// Custom Button Component
-@Component({
-  standalone: true,
-  template: `<div
-    type="button"
-    class="btn btn-danger btn-sm"
-    (click)="buttonClicked()"
-  >
-    Sell
-  </div>`,
-})
-export class CustomButtonComponent implements ICellRendererAngularComp {
-  agInit(params: ICellRendererParams): void {}
-  refresh(params: ICellRendererParams) {
-    return true;
-  }
-  buttonClicked() {
-    alert('clicked');
-  }
-}
-// End Custom Button Component
+import {
+  Component,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
+import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
+import {
+  NgbModal,
+  NgbModalConfig,
+  NgbModalRef,
+} from '@ng-bootstrap/ng-bootstrap';
+import { BuyComponent } from '../buy/buy.component';
+import { SellComponent } from '../sell/sell.component';
 
 @Component({
   selector: 'app-datagrid',
   templateUrl: './datagrid.component.html',
   styleUrls: ['./datagrid.component.scss'],
+  providers: [NgbModalConfig, NgbModal],
 })
 export class DatagridComponent implements OnInit {
+  constructor(config: NgbModalConfig, private modalService: NgbModal) {
+    // customize default values of modals used by this component tree
+    config.backdrop = 'static';
+    config.keyboard = false;
+  }
   private gridApi!: any;
   private gridColumnApi!: any;
+  userRowData: any[] = [];
 
+  @Input() currentPortfolio!: string;
   @Input() rowData!: any[];
 
   defaultColDef: ColDef = {
@@ -48,23 +46,27 @@ export class DatagridComponent implements OnInit {
     { field: 'quantity' },
     { field: 'price', headerName: 'Booked Price' },
     {
-      field: 'profit',
       headerName: 'Total Profit',
-      valueGetter: (params) => params.data.qty * params.data.price,
+      valueGetter: (params) => params.data.quantity * params.data.price,
       valueFormatter: (params) => params.value.toFixed(2),
     },
-    { field: 'PL', headerName: 'P&L' },
+    {
+      headerName: 'P&L',
+      valueGetter: (params) =>
+        (params.data.marketPrice - params.data.price) * params.data.quantity,
+    },
     { field: 'marketPrice', headerName: 'Market Price' },
     {
       field: 'sell',
       headerName: 'Sell',
-      cellRenderer: CustomButtonComponent,
+      cellRenderer: SellComponent,
+      cellRendererParams: { portfolio: this.currentPortfolio },
     },
   ];
 
-  constructor() {}
-
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.rowData);
+  }
 
   onGridReady(params: any) {
     this.gridApi = params.api;

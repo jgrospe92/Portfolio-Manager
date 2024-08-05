@@ -17,6 +17,8 @@ import { DatagridComponent } from './components/datagrid/datagrid.component';
 import { DynamicBtnComponent } from './components/dynamic-btn/dynamic-btn.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { DateAndTimeComponent } from './components/date-and-time/date-and-time.component';
+import { BuyComponent } from './components/buy/buy.component';
+import { SellComponent } from './components/sell/sell.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,8 @@ import { DateAndTimeComponent } from './components/date-and-time/date-and-time.c
     DynamicBtnComponent,
     ModalComponent,
     DateAndTimeComponent,
+    BuyComponent,
+    SellComponent,
   ],
   imports: [
     BrowserModule,
