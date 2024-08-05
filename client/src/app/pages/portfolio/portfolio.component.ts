@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { IAsset } from 'src/app/models/Asset.model';
 import { Portfolio } from 'src/app/models/Portfolio.model';
 import { CommunicationService } from 'src/app/services/communication.service';
+import { PortfolioService } from 'src/app/services/portfolio.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-portfolio',
@@ -13,13 +15,16 @@ export class PortfolioComponent implements OnInit {
   rowData: any[] = [];
   portfolios: Portfolio[] = [];
   current_user: number = 1;
+  currentUser!: string;
 
-  constructor(private communication: CommunicationService) {}
-  // TODO : replace with actual data coming from the backed
-  currentUser = 'John Doe';
+  constructor(private portfolio: PortfolioService, private user: UserService) {}
 
   ngOnInit(): void {
-    this.communication
+    this.user.getUserById(this.current_user).subscribe((user: any) => {
+      this.currentUser = user.username;
+    });
+
+    this.portfolio
       .getPortfolios(this.current_user)
       .subscribe((portfolios: Portfolio[]) => {
         console.log(portfolios);
@@ -29,7 +34,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   setRowData(portfolio_id: number) {
-    this.communication
+    this.portfolio
       .getPortfolioAssetsByID(portfolio_id)
       .subscribe((assets: any) => {
         this.rowData = assets;

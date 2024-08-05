@@ -1,10 +1,11 @@
 import mysql.connector
 from mysql.connector import errorcode
+import db_config
 
 # Add your database connection details
 db_config = {
     'user': 'root',
-    'password': 'my-secret-pw',
+    'password': db_config.password,
     'host': '127.0.0.1',
     'database': 'Portfolio_Management',
     'raise_on_warnings': True
@@ -70,6 +71,21 @@ def get_all_users():
         cursor.close()
         close_db(db)
     return users
+
+# Function to get user by Id
+def get_user_by_id(user_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT * FROM Users WHERE user_id=%s", (user_id,))
+        user = cursor.fetchone()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        user = None
+    finally:
+        cursor.close()
+        close_db(db)
+    return user
 
 def update_user_email():
     # To be implemented later once done on the client side

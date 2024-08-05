@@ -43,18 +43,20 @@ export class DatagridComponent implements OnInit {
     { field: 'type' },
     { field: 'ticker_symbol' },
     { field: 'quantity' },
-    { field: 'price', headerName: 'Booked Price' },
     {
-      headerName: 'Total Profit',
+      headerName: 'Unrealized P&L',
       valueGetter: (params) => params.data.quantity * params.data.price,
       valueFormatter: (params) => params.value.toFixed(2),
     },
     {
-      headerName: 'P&L',
+      headerName: 'Realized P&L',
       valueGetter: (params) =>
         (params.data.marketPrice - params.data.price) * params.data.quantity,
     },
-    { field: 'marketPrice', headerName: 'Market Price' },
+    {
+      field: 'marketPrice',
+      headerName: 'Market Price',
+    }, // Get Market price from Yahoo finance API
     {
       field: 'sell',
       headerName: 'Sell',
@@ -63,9 +65,7 @@ export class DatagridComponent implements OnInit {
     },
   ];
 
-  ngOnInit(): void {
-    console.log(this.rowData);
-  }
+  ngOnInit(): void {}
 
   onGridReady(params: any) {
     this.gridApi = params.api;
