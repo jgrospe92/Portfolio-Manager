@@ -43,18 +43,10 @@ export class DatagridComponent implements OnInit {
     { field: 'type' },
     { field: 'ticker_symbol' },
     { field: 'quantity' },
-    { field: 'price', headerName: 'Booked Price' },
-    {
-      headerName: 'Total Profit',
-      valueGetter: (params) => params.data.quantity * params.data.price,
-      valueFormatter: (params) => params.value.toFixed(2),
-    },
-    {
-      headerName: 'P&L',
-      valueGetter: (params) =>
-        (params.data.marketPrice - params.data.price) * params.data.quantity,
-    },
-    { field: 'marketPrice', headerName: 'Market Price' },
+    { field: 'average_price', headerName: 'Weighed average price' },
+    { field: 'projected_profit', headerName: 'Project P&L' },
+    { field: 'realized_profit', headerName: 'Realized P&L' },
+    { field: 'current_price', headerName: 'Market Price' },
     {
       field: 'sell',
       headerName: 'Sell',
