@@ -12,7 +12,6 @@ import {
   NgbModalConfig,
   NgbModalRef,
 } from '@ng-bootstrap/ng-bootstrap';
-import { BuyComponent } from '../buy/buy.component';
 import { SellComponent } from '../sell/sell.component';
 
 @Component({
