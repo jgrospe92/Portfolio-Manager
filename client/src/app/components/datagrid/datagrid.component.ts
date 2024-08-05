@@ -13,6 +13,7 @@ import {
   NgbModalRef,
 } from '@ng-bootstrap/ng-bootstrap';
 import { SellComponent } from '../sell/sell.component';
+import { YhooFinanceService } from 'src/app/services/yhoo-finance.service';
 
 @Component({
   selector: 'app-datagrid',
@@ -21,14 +22,17 @@ import { SellComponent } from '../sell/sell.component';
   providers: [NgbModalConfig, NgbModal],
 })
 export class DatagridComponent implements OnInit {
-  constructor(config: NgbModalConfig, private modalService: NgbModal) {
+  constructor(
+    config: NgbModalConfig,
+    private modalService: NgbModal,
+    private yhoofinance: YhooFinanceService
+  ) {
     // customize default values of modals used by this component tree
     config.backdrop = 'static';
     config.keyboard = false;
   }
   private gridApi!: any;
   private gridColumnApi!: any;
-  userRowData: any[] = [];
 
   @Input() currentPortfolio!: string;
   @Input() rowData!: any[];
@@ -56,7 +60,8 @@ export class DatagridComponent implements OnInit {
     {
       field: 'marketPrice',
       headerName: 'Market Price',
-    }, // Get Market price from Yahoo finance API
+      valueGetter: (params) => (params.data.marketPrice = 200), // Get Market price from Yahoo finance API
+    },
     {
       field: 'sell',
       headerName: 'Sell',
@@ -71,5 +76,17 @@ export class DatagridComponent implements OnInit {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridApi.sizeColumnsToFit();
+  }
+
+  // TODO: Implement this method using the Yahoo Finance API
+  async getMarketPrice(ticker: string): Promise<number> {
+    try {
+      const price = await this.yhoofinance.getMarketPrice(ticker);
+      console.log('Market price:', price);
+      return price;
+    } catch (error) {
+      console.error('Error fetching market price:', error);
+      return 0;
+    }
   }
 }
