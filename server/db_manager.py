@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 from yahoo_finance import *
-
+import db_config
 # Add your database connection details
 db_config = {
     'user': 'root',
