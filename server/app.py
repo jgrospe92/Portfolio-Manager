@@ -32,6 +32,17 @@ def retrieve_users():
         response.status_code = 400
     return response
 
+@app.route('/users/<int:user_id>', methods=['GET'])
+def retrieve_user_by_id(user_id):
+    try:
+        user = get_user_by_id(user_id)
+        response = jsonify(user)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def remove_user(user_id):
     try:

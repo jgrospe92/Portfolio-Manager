@@ -14,7 +14,7 @@ USE `Portfolio_Management`;
 CREATE TABLE Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    funds INT  NOT NULL,
+    funds INT  NOT NULL DEFAULT 0,
     password VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -27,7 +27,7 @@ CREATE TABLE Portfolios (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    profit FLOAT NOT NULL,
+    profit FLOAT NOT NULL DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
@@ -51,7 +51,7 @@ CREATE TABLE Transactions (
     quantity INT NOT NULL,
     price_per_unit FLOAT NOT NULL,
     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    transaction_profit FLOAT NOT NULL,
+    transaction_profit FLOAT NOT NULL DEFAULT 0,
     FOREIGN KEY (portfolio_id) REFERENCES Portfolios(portfolio_id),
     FOREIGN KEY (asset_id) REFERENCES Assets(asset_id)
 );
