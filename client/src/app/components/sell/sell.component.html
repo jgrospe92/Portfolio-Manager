@@ -1,0 +1,67 @@
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Sell Order Entry</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="d-flex flex-column">
+      <p>{{ stockNameAndTicker.toUpperCase() }}</p>
+      <p class="stockPrice">Price per share : {{ price }}</p>
+    </div>
+    <div class="app_buy_layout row align-items-center">
+      <div class="col-auto">
+        <label for="qty" class="col-form-label">QTY: </label>
+      </div>
+      <div class="col-auto app_buy_layout__qtyForm">
+        <input
+          type="number"
+          class="form-control form-control-sm"
+          aria-describedby="qty"
+          id="qty"
+          [(ngModel)]="quantity"
+          (input)="calculateTotal()"
+          min="0"
+          value="0"
+        />
+      </div>
+      <div class="col-auto">
+        <label class="col-form-label"
+          >Account: <span>{{ currentPortfolio }}</span></label
+        >
+      </div>
+      <div class="col-auto">
+        <label class="col-form-label">Total: {{ totalAmount }} </label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer app_buy_footer">
+    <div>
+      <p>Available Balance: {{ userBalance }}</p>
+    </div>
+    <div class="">
+      <button
+        type="button"
+        class="btn btn-success btn-sm me-2"
+        [disabled]="quantity === 0 || totalAmount > userBalance"
+        (click)="sendOrder()"
+      >
+        Send Order
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        (click)="modal.close('Close click')"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</ng-template>
+<div type="button" class="btn btn-danger btn-sm" (click)="openSellWindow()">
+  Sell
+</div>
