@@ -1,0 +1,11 @@
+.app_sell_layout {
+  &__qtyForm {
+    margin-right: 0px;
+    width: 80px;
+  }
+}
+
+.app_sell_footer {
+  display: flex;
+  justify-content: space-between;
+}

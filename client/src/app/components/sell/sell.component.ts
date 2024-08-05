@@ -69,6 +69,7 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
 
   // TODO: implement the send order function
   sendOrder() {
+    console.log(this.selectedPortfolio);
     alert('Order Sent');
   }
 

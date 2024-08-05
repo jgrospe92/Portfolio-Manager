@@ -28,9 +28,7 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
   private params: any;
 
   constructor(private modalService: NgbModal) {}
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
+  ngOnInit(): void {}
   agInit(params: ICellRendererParams): void {
     this.params = params;
   }

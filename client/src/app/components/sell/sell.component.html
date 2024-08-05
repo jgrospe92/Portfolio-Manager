@@ -13,11 +13,11 @@
       <p>{{ stockNameAndTicker.toUpperCase() }}</p>
       <p class="stockPrice">Price per share : {{ price }}</p>
     </div>
-    <div class="app_buy_layout row align-items-center">
+    <div class="app_sell_layout row align-items-center">
       <div class="col-auto">
         <label for="qty" class="col-form-label">QTY: </label>
       </div>
-      <div class="col-auto app_buy_layout__qtyForm">
+      <div class="col-auto app_sell_layout__qtyForm">
         <input
           type="number"
           class="form-control form-control-sm"
@@ -39,7 +39,7 @@
       </div>
     </div>
   </div>
-  <div class="modal-footer app_buy_footer">
+  <div class="modal-footer app_sell_footer">
     <div>
       <p>Available Balance: {{ userBalance }}</p>
     </div>
