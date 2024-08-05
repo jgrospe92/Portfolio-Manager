@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
+from yahoo_finance import *
 import db_config
-
 # Add your database connection details
 db_config = {
     'user': 'root',
@@ -129,6 +129,13 @@ def get_assets_by_portfolio_id(portfolio_id):
         """
         cursor.execute(query, (portfolio_id,))
         assets = cursor.fetchall()
+        for asset in assets:
+            # Fetch the current price for each asset using its ticker symbol
+            current_price = get_asset_price(asset['ticker_symbol'])
+            asset['current_price'] = current_price
+            asset['projected_profit'] = (current_price - asset['average_price']) * asset['quantity']
+            asset['realized_profit'] = get_realized_profit(portfolio_id, asset['asset_id'])
+
     except mysql.connector.Error as err:
         print(f"Error: {err}")
         assets = []
@@ -137,12 +144,43 @@ def get_assets_by_portfolio_id(portfolio_id):
         db.close()
     return assets
 
+import mysql.connector
+from mysql.connector import Error
+
+def get_realized_profit(portfolio_id, asset_id=None):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        query = """
+                SELECT SUM(transaction_profit) AS total_profit
+                FROM Transactions 
+                WHERE portfolio_id = %s
+            """
+        if asset_id:
+            query = query +""" AND asset_id = %s
+            """
+            params = (portfolio_id, asset_id)
+        else:
+            params = (portfolio_id,)
+        cursor.execute(query, params)
+        result = cursor.fetchone()
+        if result is None or result['total_profit'] is None:
+            raise Exception("No matching record found in Transactions")
+        total_profit = result['total_profit']
+        return total_profit
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return None
+    finally:
+        cursor.close()
+        db.close()
+
+
 # Function to update a portfolio's name
 def update_portfolio_name(portfolio_id, new_name):
     # To be implemented later once done on the client side
     return
 
-# Function to get all portfolios
 def get_all_portfolios(user_id):
     db = get_db()
     cursor = db.cursor(dictionary=True)
@@ -160,7 +198,6 @@ def get_all_portfolios(user_id):
 
 
 
-# Function to delete an asset
 def delete_asset(asset_id):
     db = get_db()
     cursor = db.cursor()
@@ -173,7 +210,6 @@ def delete_asset(asset_id):
         cursor.close()
         close_db(db)
         
-# Function to update an asset's name
 def update_asset_name(asset_id, new_name):
     db = get_db()
     cursor = db.cursor()
@@ -186,7 +222,6 @@ def update_asset_name(asset_id, new_name):
         cursor.close()
         close_db(db)
 
-### Buy and Sell 
 def add_transaction(user_id, ticker, volume, price, type):
     db = get_db()
     cursor = db.cursor()
@@ -200,17 +235,14 @@ def add_transaction(user_id, ticker, volume, price, type):
         cursor.close()
         close_db(db)
 
-# Function to add an asset
 def add_asset(name, type, ticker_symbol):
     db = get_db()
     cursor = db.cursor()
     try:
-        # Check if the asset already exists
         cursor.execute("SELECT asset_id FROM Assets WHERE ticker_symbol = %s", (ticker_symbol,))
         asset = cursor.fetchone()
         
         if not asset:
-            # If asset does not exist, add it
             cursor.execute("INSERT INTO Assets (name, type, ticker_symbol) VALUES (%s, %s, %s)", 
                         (name, type, ticker_symbol))
             db.commit()
@@ -220,7 +252,6 @@ def add_asset(name, type, ticker_symbol):
         cursor.close()
         close_db(db)
 
-# Function to get asset ID by ticker symbol
 def get_asset_id(ticker_symbol):
     db = get_db()
     cursor = db.cursor()
@@ -236,7 +267,6 @@ def get_asset_id(ticker_symbol):
         close_db(db)
     return asset_id
 
-# Function to get user funds by portfolio_id
 def get_user_funds(portfolio_id):
     db = get_db()
     cursor = db.cursor()
@@ -256,7 +286,7 @@ def get_user_funds(portfolio_id):
         close_db(db)
     return user_funds
 
-# Function to record a transaction
+
 def record_transaction(portfolio_id, asset_id, quantity, price_per_unit):
     db = get_db()
     cursor = db.cursor()
@@ -272,7 +302,6 @@ def record_transaction(portfolio_id, asset_id, quantity, price_per_unit):
         cursor.close()
         close_db(db)
 
-# Function to update portfolio assets
 def update_portfolio_assets(portfolio_id, asset_id, quantity, price_per_unit):
     db = get_db()
     cursor = db.cursor()
@@ -306,7 +335,6 @@ def update_portfolio_assets(portfolio_id, asset_id, quantity, price_per_unit):
         cursor.close()
         close_db(db)
 
-# Function to update user funds
 def update_user_funds(portfolio_id, new_funds):
     db = get_db()
     cursor = db.cursor()
@@ -350,8 +378,6 @@ def calculate_realized_profit(portfolio_id, asset_id, price_per_unit, quantity):
         close_db(db)
 
     
-        
-# Function to record a transaction with type (BUY or SELL)
 def record_transaction(portfolio_id, asset_id, quantity, price_per_unit, transaction_type):
     db = get_db()
     cursor = db.cursor()
@@ -370,7 +396,6 @@ def record_transaction(portfolio_id, asset_id, quantity, price_per_unit, transac
         cursor.close()
         close_db(db)
 
-# Function to get portfolio asset details
 def get_portfolio_asset(portfolio_id, asset_id):
     db = get_db()
     cursor = db.cursor(dictionary=True)
@@ -388,7 +413,6 @@ def get_portfolio_asset(portfolio_id, asset_id):
         close_db(db)
     return portfolio_asset
 
-# Function to update portfolio assets on sell
 def update_portfolio_assets_on_sell(portfolio_id, asset_id, quantity):
     db = get_db()
     cursor = db.cursor()
@@ -422,7 +446,6 @@ def update_portfolio_assets_on_sell(portfolio_id, asset_id, quantity):
         cursor.close()
         close_db(db)
 
-# Function to update user funds
 def update_user_funds(portfolio_id, new_funds):
     db = get_db()
     cursor = db.cursor()

@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from db_manager import *
 from flask_cors import CORS
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -111,8 +112,8 @@ def buy_asset():
     ticker_symbol = data['ticker_symbol']
     quantity = float(data['quantity'])
     portfolio_id = int(data['portfolio_id'])
-    price_per_unit = float(data['price_per_unit'])  # Assuming this is provided in the request
-
+    price_per_unit = float(get_asset_price(ticker_symbol))
+    
     try:
         # Ensure asset is added to the Assets table
         add_asset(name, type, ticker_symbol)
@@ -165,7 +166,7 @@ def sell_asset():
     ticker_symbol = data['ticker_symbol']
     quantity = float(data['quantity'])
     portfolio_id = int(data['portfolio_id'])
-    price_per_unit = float(data['price_per_unit'])  # Assuming this is provided in the request
+    price_per_unit = float(get_asset_price(ticker_symbol))
 
     try:
         # Fetch the asset ID
@@ -197,6 +198,7 @@ def sell_asset():
         response.status_code = 400
 
     return response
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -47,21 +47,10 @@ export class DatagridComponent implements OnInit {
     { field: 'type' },
     { field: 'ticker_symbol' },
     { field: 'quantity' },
-    {
-      headerName: 'Unrealized P&L',
-      valueGetter: (params) => params.data.quantity * params.data.price,
-      valueFormatter: (params) => params.value.toFixed(2),
-    },
-    {
-      headerName: 'Realized P&L',
-      valueGetter: (params) =>
-        (params.data.marketPrice - params.data.price) * params.data.quantity,
-    },
-    {
-      field: 'marketPrice',
-      headerName: 'Market Price',
-      valueGetter: (params) => (params.data.marketPrice = 200), // Get Market price from Yahoo finance API
-    },
+    { field: 'average_price', headerName: 'Weighed average price' },
+    { field: 'projected_profit', headerName: 'Project P&L' },
+    { field: 'realized_profit', headerName: 'Realized P&L' },
+    { field: 'current_price', headerName: 'Market Price' },
     {
       field: 'sell',
       headerName: 'Sell',
