@@ -76,21 +76,6 @@ export class DatagridComponent implements OnInit {
       valueFormatter: (params) => params.value.toFixed(4),
     },
     { field: 'average_price', headerName: 'Average Price' },
-    // {
-    //   headerName: 'Unrealized P&L',
-    //   valueGetter: (params) => params.data.quantity * params.data.price,
-    //   valueFormatter: (params) => params.value.toFixed(2),
-    // },
-    // {
-    //   headerName: 'Realized P&L',
-    //   valueGetter: (params) =>
-    //     (params.data.marketPrice - params.data.price) * params.data.quantity,
-    // },
-    // {
-    //   field: 'marketPrice',
-    //   headerName: 'Market Price',
-    //   valueGetter: (params) => (params.data.marketPrice = 200), // Get Market price from Yahoo finance API
-    // },
     {
       field: 'sell',
       headerName: 'Sell',
