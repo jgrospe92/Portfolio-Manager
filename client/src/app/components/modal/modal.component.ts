@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 import { BuyComponent } from '../buy/buy.component';
+import { CommunicationService } from 'src/app/services/communication.service';
 
 @Component({
   selector: 'app-modal',
@@ -10,7 +11,7 @@ import { BuyComponent } from '../buy/buy.component';
   providers: [NgbModalConfig, NgbModal],
 })
 export class ModalComponent implements OnInit {
-  constructor(config: NgbModalConfig, private modalService: NgbModal) {
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private communication: CommunicationService) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
@@ -21,134 +22,13 @@ export class ModalComponent implements OnInit {
   // TODO: replace this with the actual data coming from the mock csv file
   // we can create a service that reads the csv file and returns the data
   // This is the stock market data that will be displayed in the modal
-  rowData: any[] | null = [
-    {
-      name: 'Apple Inc',
-      instrument: 'Stock',
-      ticker: 'AAPL',
-      price: 150,
-    },
-    {
-      name: 'Microsoft Corporation',
-      instrument: 'Stock',
-      ticker: 'MSFT',
-      price: 300,
-    },
-    {
-      name: 'Amazon.com, Inc.',
-      instrument: 'Stock',
-      ticker: 'AMZN',
-      price: 3500,
-    },
-    {
-      name: 'Alphabet Inc.',
-      instrument: 'Stock',
-      ticker: 'GOOGL',
-      price: 2500,
-    },
-    {
-      name: 'Facebook, Inc.',
-      instrument: 'Stock',
-      ticker: 'FB',
-      price: 350,
-    },
-    {
-      name: 'Tesla, Inc.',
-      instrument: 'Stock',
-      ticker: 'TSLA',
-      price: 700,
-    },
-    {
-      name: 'Netflix, Inc.',
-      instrument: 'Stock',
-      ticker: 'NFLX',
-      price: 550,
-    },
-    {
-      name: 'Adobe Inc.',
-      instrument: 'Stock',
-      ticker: 'ADBE',
-      price: 600,
-    },
-    {
-      name: 'Intel Corporation',
-      instrument: 'Stock',
-      ticker: 'INTC',
-      price: 55,
-    },
-    {
-      name: 'NVIDIA Corporation',
-      instrument: 'Stock',
-      ticker: 'NVDA',
-      price: 800,
-    },
-    {
-      name: 'Visa Inc.',
-      instrument: 'Stock',
-      ticker: 'V',
-      price: 250,
-    },
-    {
-      name: 'Mastercard Incorporated',
-      instrument: 'Stock',
-      ticker: 'MA',
-      price: 350,
-    },
-    {
-      name: 'Salesforce.com, Inc.',
-      instrument: 'Stock',
-      ticker: 'CRM',
-      price: 250,
-    },
-    {
-      name: 'PayPal Holdings, Inc.',
-      instrument: 'Stock',
-      ticker: 'PYPL',
-      price: 300,
-    },
-    {
-      name: 'Johnson & Johnson',
-      instrument: 'Stock',
-      ticker: 'JNJ',
-      price: 150,
-    },
-    {
-      name: 'Pfizer Inc.',
-      instrument: 'Stock',
-      ticker: 'PFE',
-      price: 40,
-    },
-    {
-      name: 'Coca-Cola Company',
-      instrument: 'Stock',
-      ticker: 'KO',
-      price: 50,
-    },
-    {
-      name: 'Walmart Inc.',
-      instrument: 'Stock',
-      ticker: 'WMT',
-      price: 130,
-    },
-    {
-      name: 'Procter & Gamble Company',
-      instrument: 'Stock',
-      ticker: 'PG',
-      price: 140,
-    },
-    {
-      name: 'Verizon Communications Inc.',
-      instrument: 'Stock',
-      ticker: 'VZ',
-      price: 60,
-    },
-  ];
+  rowData: any[] | null = [];
 
   columnDefs: ColDef[] = [
-    { headerName: 'Name', field: 'name' },
-    { headerName: 'Ticker', field: 'ticker' },
-    { headerName: 'Instrument', field: 'instrument' },
-    { headerName: 'Price', field: 'price' },
+    { headerName: 'Name', field: 'Name' },
+    { headerName: 'Ticker', field: 'Symbol' },
+    { headerName: 'Instrument', field: 'Type' },
+    { headerName: 'Price', field: 'Price' },
     {
       headerName: 'Buy',
       field: 'buy',
@@ -168,7 +48,11 @@ export class ModalComponent implements OnInit {
   }
 
   onSearch(event: any) {
-    this.gridApi.setQuickFilter(event.target.value);
+    this.communication
+      .getMarketAssetsByName(event.target.value)
+      .subscribe((assets: any[]) => {
+        this.rowData = assets;
+      });
   }
 
   hasRowData(): boolean {

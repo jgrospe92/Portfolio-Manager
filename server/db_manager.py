@@ -1,6 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
-from yahoo_finance import *
+from stock_infos import *
 import db_config
 # Add your database connection details
 db_config = {
@@ -131,6 +131,7 @@ def get_assets_by_portfolio_id(portfolio_id):
         assets = cursor.fetchall()
         for asset in assets:
             # Fetch the current price for each asset using its ticker symbol
+            print(asset['ticker_symbol'])
             current_price = get_asset_price(asset['ticker_symbol'])
             asset['current_price'] = current_price
             asset['projected_profit'] = (current_price - asset['average_price']) * asset['quantity']
@@ -143,9 +144,6 @@ def get_assets_by_portfolio_id(portfolio_id):
         cursor.close()
         db.close()
     return assets
-
-import mysql.connector
-from mysql.connector import Error
 
 def get_realized_profit(portfolio_id, asset_id=None):
     db = get_db()
