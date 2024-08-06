@@ -55,6 +55,12 @@ export class CommunicationService {
     return this.http.get(url).pipe(catchError(this.handleError));
   }
 
+  getMarketAssetsByName(name: string): Observable<any> {
+    const url = `${this.baseUrl}/market_assets/${name}`;
+    console.log(url)
+    return this.http.get(url).pipe(catchError(this.handleError));
+  }
+
   deletePortfolio(portfolioId: number): Observable<any> {
     const url = `${this.baseUrl}/portfolios/${portfolioId}`;
     return this.http.delete(url).pipe(catchError(this.handleError));

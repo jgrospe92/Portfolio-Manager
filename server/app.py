@@ -202,6 +202,19 @@ def sell_asset():
 
     return response
 
+@app.route('/market_assets/<string:name>', methods=['GET'])
+def get_market_assets(name):
+    try:
+        print('whayaya')
+        assets = search_stocks_and_get_prices(name)
+        response = jsonify(assets)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
+
+
 @app.route('/realized_profit_loss/<int:portfolio_id>', methods=['GET'])
 def realized_profit_loss(portfolio_id):
     try:
@@ -264,6 +277,8 @@ def real_time_price():
         response = jsonify(message=str(e))
         response.status_code = 400
     return response
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
