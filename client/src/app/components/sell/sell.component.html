@@ -26,6 +26,7 @@
           [(ngModel)]="quantity"
           (input)="calculateTotal()"
           min="0"
+          [max]="getMaxQuantity()"
           value="0"
         />
       </div>

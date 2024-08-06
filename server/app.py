@@ -167,10 +167,12 @@ def sell_asset():
     quantity = float(data['quantity'])
     portfolio_id = int(data['portfolio_id'])
     price_per_unit = float(get_asset_price(ticker_symbol))
+    print('data', data)
 
     try:
         # Fetch the asset ID
         asset_id = get_asset_id(ticker_symbol)
+        print("asset_id", asset_id)
 
         # Get current portfolio asset details
         portfolio_asset = get_portfolio_asset(portfolio_id, asset_id)
@@ -193,6 +195,7 @@ def sell_asset():
 
         response = jsonify(message="Asset sold successfully")
         response.status_code = 201
+        
     except Exception as e:
         response = jsonify(message=str(e))
         response.status_code = 400

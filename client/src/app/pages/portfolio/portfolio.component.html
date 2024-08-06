@@ -9,10 +9,16 @@
     <app-modal [isBuyValid]="isPortfolioSelected()"></app-modal>
   </div>
   <div class="mt-3">
-    <app-datagrid [rowData]="rowData"></app-datagrid>
+    <app-datagrid
+      [currentPortfolio]="currentPortfolio"
+      [rowData]="rowData"
+    ></app-datagrid>
   </div>
   <footer>
-    <p>Login as {{ currentUser }}</p>
+    <div class="d-flex">
+      <p>Login as {{ currentUser }}</p>
+      <p class="ms-2">Balance : {{ currentUserFunds }}</p>
+    </div>
     <app-date-and-time></app-date-and-time>
   </footer>
 </div>
