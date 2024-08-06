@@ -96,12 +96,24 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
         (this.sessionService.getItem('currentUser') as any).portfolio,
         this.price
       )
-      .subscribe((response) => {});
+      .subscribe((response) => {
+        this.modalRef.close();
+        setTimeout(() => {
+          location.reload();
+        }, 500);
+      });
   }
 
   openSellWindow() {
     this.open(this.content);
     this.instantiateStockData();
+  }
+
+  close() {
+    this.modalService.dismissAll();
+    setTimeout(() => {
+      location.reload();
+    }, 500);
   }
 
   private setUserFund() {

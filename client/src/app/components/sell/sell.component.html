@@ -1,12 +1,12 @@
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Sell Order Entry</h4>
-    <button
+    <!-- <button
       type="button"
       class="btn-close"
       aria-label="Close"
       (click)="modal.dismiss('Cross click')"
-    ></button>
+    ></button> -->
   </div>
   <div class="modal-body">
     <div class="d-flex flex-column">
@@ -53,11 +53,7 @@
       >
         Send Order
       </button>
-      <button
-        type="button"
-        class="btn btn-secondary btn-sm"
-        (click)="modal.close('Close click')"
-      >
+      <button type="button" class="btn btn-secondary btn-sm" (click)="close()">
         Close
       </button>
     </div>

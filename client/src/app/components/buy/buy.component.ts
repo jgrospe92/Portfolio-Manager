@@ -8,6 +8,10 @@ import {
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
+import { AssetService } from 'src/app/services/asset.service';
+import { PortfolioService } from 'src/app/services/portfolio.service';
+import { SessionService } from 'src/app/services/session.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-buy',
@@ -19,21 +23,37 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
   content!: TemplateRef<any>;
   modalRef!: NgbModalRef;
 
-  accounts: string[] = ['High Yield Technology', 'S&P 500']; // use the data from the portfolio component
+  portfolios!: string[];
+  selectedPortfolio!: string;
+  getCurrentUserId!: number;
   stockNameAndTicker!: string;
   price!: number;
   quantity!: number;
   userBalance!: number;
   totalAmount: number = 0;
+
   private params: any;
 
-  constructor(private modalService: NgbModal) {}
-  ngOnInit(): void {}
+  constructor(
+    private modalService: NgbModal,
+    private sessionService: SessionService,
+    private user: UserService,
+    private portfolioService: PortfolioService,
+    private assetService: AssetService
+  ) {}
+  ngOnInit(): void {
+    this.user.getUserById(this.getCurrentUserId).subscribe((user: any) => {
+      this.userBalance = user.funds;
+    });
+  }
+
   agInit(params: ICellRendererParams): void {
+    this.loadUserPortfolios();
     this.params = params;
   }
   refresh(params: ICellRendererParams) {
     this.params = params;
+    this.loadUserPortfolios();
     return true;
   }
 
@@ -43,6 +63,17 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
     });
   }
 
+  loadUserPortfolios() {
+    this.getCurrentUserId = (
+      this.sessionService.getItem('currentUser') as any
+    ).id;
+    this.portfolioService
+      .getPortfolios(this.getCurrentUserId)
+      .subscribe((data) => {
+        this.portfolios = data.map((portfolio: any) => portfolio.name);
+      });
+  }
+
   openBuyWindow() {
     this.open(this.content);
     this.instantiateStockData();
@@ -50,9 +81,8 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
 
   instantiateStockData() {
     this.quantity = 0;
-    this.price = this.params.data.price;
-    this.stockNameAndTicker = `${this.params.data.name} (${this.params.data.ticker})`;
-    this.userBalance = 10000; // TODO: replace with the actual data
+    this.price = this.params.data.Price;
+    this.stockNameAndTicker = `${this.params.data.Name} (${this.params.data.Symbol})`;
   }
 
   calculateTotal(): void {
@@ -66,20 +96,20 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
     return Number.isInteger(this.quantity);
   }
 
+  getUserBalance() {}
+
   // TODO: implement the send order function
   sendOrder() {
-    alert('Order Sent');
+    var name = this.params.data.name;
+    var type = this.params.data.type;
+    var ticker_symbol = this.params.data.ticker;
+    var qty = this.quantity;
+    var portfolio_id = this.portfolios.indexOf(this.selectedPortfolio) + 1;
+    var price = this.price;
+
+    this.assetService
+      .buyAsset(name, type, ticker_symbol, qty, portfolio_id, price)
+      .subscribe((data) => {});
+    this.modalRef.close();
   }
-
-  // onSelectedPortfolio(portfolio: string) {
-  //   switch (portfolio) {
-  //     case 'High Yield Technology':
-  //       break;
-  //     case 'S&P 500':
-  //       break;
-  //     default:
-
-  //       break;
-  //   }
-  // }
 }

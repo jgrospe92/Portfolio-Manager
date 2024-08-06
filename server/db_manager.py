@@ -192,9 +192,6 @@ def get_all_portfolios(user_id):
         cursor.close()
         db.close()
     return portfolios
-        
-
-
 
 def delete_asset(asset_id):
     db = get_db()

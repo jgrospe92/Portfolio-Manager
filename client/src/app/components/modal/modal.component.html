@@ -5,18 +5,26 @@
       <app-date-and-time></app-date-and-time>
     </div>
 
-    <button type="button" class="btn-close" (click)="d('Cross click')"></button>
+    <!-- <button type="button" class="btn-close" (click)="d('Cross click')"></button> -->
   </div>
   <div class="modal-body">
     <p>Market Data</p>
     <div class="input-group input-group-sm mb-3 w-50">
       <input
+        #searchInput
         type="text"
         class="form-control"
         aria-describedby="inputGroup-sizing-sm"
         placeholder="Search for name or ticker symbol"
-        (input)="onSearch($event)"
       />
+      <button
+        type="button"
+        (click)="fetchStock(searchInput.value)"
+        class="btn btn-dark ms-2"
+        [disabled]="!searchInput.value"
+      >
+        Search
+      </button>
     </div>
     <!-- ag grid -->
     <ag-grid-angular
@@ -30,11 +38,7 @@
     ></ag-grid-angular>
   </div>
   <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline-secondary"
-      (click)="c('Save click')"
-    >
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
       Close
     </button>
   </div>

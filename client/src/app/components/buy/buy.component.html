@@ -33,14 +33,20 @@
         <label class="col-form-label">Account: </label>
       </div>
       <div class="col-auto">
-        <select class="form-select" aria-label="account">
-          <option *ngFor="let account of accounts" [value]="account">
-            {{ account }}
+        <select
+          class="form-select"
+          aria-label="account"
+          [(ngModel)]="selectedPortfolio"
+        >
+          <option *ngFor="let portfolio of portfolios" [value]="portfolio">
+            {{ portfolio }}
           </option>
         </select>
       </div>
       <div class="col-auto">
-        <label class="col-form-label">Total: {{ totalAmount }} </label>
+        <label class="col-form-label"
+          >Total: {{ totalAmount.toFixed(4) }}
+        </label>
       </div>
     </div>
   </div>
