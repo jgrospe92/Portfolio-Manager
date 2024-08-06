@@ -48,6 +48,11 @@ export class AssetService {
     return this.http.put(url, body).pipe(catchError(this.handleError));
   }
 
+  getRealTimePrice(tickerSymbol: string): Observable<any> {
+    const url = `${this.baseUrl}/real_time_price/${tickerSymbol}`;
+    return this.http.get(url).pipe(catchError(this.handleError));
+  }
+
   private handleError(error: any): Observable<never> {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
