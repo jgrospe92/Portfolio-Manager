@@ -84,17 +84,6 @@ export class DatagridComponent implements OnInit {
     },
   ];
 
-  // TODO: Implement this method using the Yahoo Finance API
-  async getMarketPrice(ticker: string): Promise<number> {
-    try {
-      const price = await this.yhoofinance.getMarketPrice(ticker);
-      return price;
-    } catch (error) {
-      console.error('Error fetching market price:', error);
-      return 0;
-    }
-  }
-
   getCurrentUserId(): number {
     return (this.sessionService.getItem('currentUser') as any).userId;
   }

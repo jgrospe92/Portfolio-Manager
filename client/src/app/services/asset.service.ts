@@ -26,6 +26,27 @@ export class AssetService {
     return this.http.get(url).pipe(catchError(this.handleError));
   }
 
+  // TODO: Implement the following methods
+  buyAsset(
+    name: string,
+    type: string,
+    ticker_symbol: string,
+    quantity: number,
+    portfolio_id: number,
+    price: number
+  ): Observable<any> {
+    const url = `${this.baseUrl}/buy`;
+    const body = {
+      name,
+      type,
+      ticker_symbol,
+      quantity,
+      portfolio_id,
+      price,
+    };
+    return this.http.post(url, body).pipe(catchError(this.handleError));
+  }
+
   sellAsset(
     ticker_symbol: string,
     quantity: number,

@@ -112,7 +112,8 @@ def buy_asset():
     ticker_symbol = data['ticker_symbol']
     quantity = float(data['quantity'])
     portfolio_id = int(data['portfolio_id'])
-    price_per_unit = float(get_asset_price(ticker_symbol))
+    price_per_unit = float(data["price"])
+    # price_per_unit = float(get_asset_price(ticker_symbol)) 
     
     try:
         # Ensure asset is added to the Assets table
@@ -265,10 +266,8 @@ def unrealized_profit_loss_single_stock():
         response.status_code = 400
     return response
 
-@app.route('/real_time_price', methods=['GET'])
-def real_time_price():
-    data = request.get_json()
-    ticker_symbol = data['ticker_symbol']
+@app.route('/real_time_price/<ticker_symbol>', methods=['GET'])
+def real_time_price(ticker_symbol):
     try:
         price = get_real_time_price(ticker_symbol)
         response = jsonify(price)
