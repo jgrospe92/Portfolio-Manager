@@ -81,8 +81,8 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
 
   instantiateStockData() {
     this.quantity = 0;
-    this.price = this.params.data.Price;
-    this.stockNameAndTicker = `${this.params.data.Name} (${this.params.data.Symbol})`;
+    this.price = this.params.data.price;
+    this.stockNameAndTicker = `${this.params.data.name} (${this.params.data.ticker})`;
   }
 
   calculateTotal(): void {

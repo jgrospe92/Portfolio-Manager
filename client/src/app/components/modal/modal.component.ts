@@ -28,10 +28,10 @@ export class ModalComponent implements OnInit {
   rowData: any[] | null = [];
 
   columnDefs: ColDef[] = [
-    { headerName: 'Name', field: 'Name' },
-    { headerName: 'Ticker', field: 'Symbol' },
-    { headerName: 'Instrument', field: 'Type' },
-    { headerName: 'Price', field: 'Price' },
+    { headerName: 'Name', field: 'name' },
+    { headerName: 'Ticker', field: 'ticker' },
+    { headerName: 'Instrument', field: 'type' },
+    { headerName: 'Price', field: 'price' },
     {
       headerName: 'Buy',
       field: 'buy',

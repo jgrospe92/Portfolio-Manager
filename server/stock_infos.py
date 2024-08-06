@@ -26,10 +26,10 @@ def search_stocks_and_get_prices(query):
         stock = yf.Ticker(symbol)
         stock_info = stock.info
         renamed_stock = {
-            'Symbol': stock_info.get('symbol'),
-            'Name': stock_info.get('longName'),
-            'Price': stock_info.get('currentPrice'),
-            'Type': stock_info.get('quoteType')
+            'ticker': stock_info.get('symbol'),
+            'name': stock_info.get('longName'),
+            'price': stock_info.get('currentPrice'),
+            'type': stock_info.get('quoteType')
         }
         assets.append(renamed_stock)
     
