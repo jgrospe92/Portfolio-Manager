@@ -458,7 +458,6 @@ def update_user_funds(portfolio_id, new_funds):
         cursor.close()
         close_db(db)
 
-# Function to retrieve real-time market price
 def get_real_time_price(ticker):
     stock = yf.Ticker(ticker)
     data = stock.history(period="1d")
@@ -572,3 +571,29 @@ def get_single_stock_unrealized(portfolio_id, ticker_symbol):
         cursor.close()
         close_db(db)
     return unrealized_profit_loss
+
+def calculate_roi(portfolio_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT SUM(pa.quantity * pa.average_price) as total_investment
+            FROM Portfolio_Assets pa
+            WHERE pa.portfolio_id = %s
+        """, (portfolio_id,))
+        result = cursor.fetchone()
+        total_investment = result['total_investment'] if result['total_investment'] else 0.0
+        realized_profit_loss = get_realized_profit_loss(portfolio_id)
+        unrealized_profit_loss = get_unrealized_profit_loss(portfolio_id)
+        net_profit = realized_profit_loss + unrealized_profit_loss
+        if total_investment > 0:
+            roi = (net_profit / total_investment) * 100
+        else:
+            roi = 0.0
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        roi = 0.0
+    finally:
+        cursor.close()
+        close_db(db)
+    return roi
