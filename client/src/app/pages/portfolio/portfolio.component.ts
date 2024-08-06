@@ -3,6 +3,7 @@ import { IAsset } from 'src/app/models/Asset.model';
 import { Portfolio } from 'src/app/models/Portfolio.model';
 import { CommunicationService } from 'src/app/services/communication.service';
 import { PortfolioService } from 'src/app/services/portfolio.service';
+import { SessionService } from 'src/app/services/session.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -16,18 +17,26 @@ export class PortfolioComponent implements OnInit {
   portfolios: Portfolio[] = [];
   current_user: number = 1;
   currentUser!: string;
+  currentUserId!: number;
+  currentPortfolio!: string;
+  currentUserFunds!: number;
 
-  constructor(private portfolio: PortfolioService, private user: UserService) {}
+  constructor(
+    private portfolio: PortfolioService,
+    private user: UserService,
+    private sessionService: SessionService
+  ) {}
 
   ngOnInit(): void {
     this.user.getUserById(this.current_user).subscribe((user: any) => {
       this.currentUser = user.username;
+      this.currentUserFunds = user.funds;
+      this.currentUserId = user.user_id;
     });
 
     this.portfolio
       .getPortfolios(this.current_user)
       .subscribe((portfolios: Portfolio[]) => {
-        console.log(portfolios);
         this.portfolios = portfolios;
         this.dropdownItems = portfolios.map((portfolio) => portfolio.name);
       });
@@ -36,7 +45,7 @@ export class PortfolioComponent implements OnInit {
   setRowData(portfolio_id: number) {
     this.portfolio
       .getPortfolioAssetsByID(portfolio_id)
-      .subscribe((assets: any) => {
+      .subscribe((assets: any[]) => {
         this.rowData = assets;
       });
   }
@@ -53,9 +62,12 @@ export class PortfolioComponent implements OnInit {
 
   onSelectedPortfolio(portfolio_name: string) {
     const portfolioId = this.getPortfolioIdByName(portfolio_name);
-    console.log(portfolioId);
+    this.sessionService.setItem('currentUser', {
+      id: this.currentUserId,
+      name: this.currentUser,
+      portfolio: portfolioId,
+    });
     this.setRowData(portfolioId);
-    console.log(this.rowData);
   }
 
   /**

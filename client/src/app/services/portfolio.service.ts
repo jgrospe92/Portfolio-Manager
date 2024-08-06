@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, shareReplay, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -23,12 +23,16 @@ export class PortfolioService {
 
   getPortfolios(userId: number): Observable<any> {
     const url = `${this.baseUrl}/portfolios/${userId}`;
-    return this.http.get(url).pipe(catchError(this.handleError));
+    return this.http
+      .get(url)
+      .pipe(shareReplay(1), catchError(this.handleError));
   }
 
   getPortfolioAssetsByID(userId: number): Observable<any> {
     const url = `${this.baseUrl}/assets/${userId}`;
-    return this.http.get(url).pipe(catchError(this.handleError));
+    return this.http
+      .get(url)
+      .pipe(shareReplay(1), catchError(this.handleError));
   }
 
   deletePortfolio(portfolioId: number): Observable<any> {

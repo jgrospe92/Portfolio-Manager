@@ -26,6 +26,17 @@ export class AssetService {
     return this.http.get(url).pipe(catchError(this.handleError));
   }
 
+  sellAsset(
+    ticker_symbol: string,
+    quantity: number,
+    portfolio_id: number,
+    price_per_unit: number
+  ): Observable<any> {
+    const url = `${this.baseUrl}/sell`;
+    const body = { ticker_symbol, quantity, portfolio_id, price_per_unit };
+    return this.http.post(url, body).pipe(catchError(this.handleError));
+  }
+
   deleteAsset(assetId: number): Observable<any> {
     const url = `${this.baseUrl}/assets/${assetId}`;
     return this.http.delete(url).pipe(catchError(this.handleError));

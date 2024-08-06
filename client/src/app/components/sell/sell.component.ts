@@ -8,6 +8,9 @@ import {
 import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
+import { AssetService } from 'src/app/services/asset.service';
+import { SessionService } from 'src/app/services/session.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-sell',
@@ -15,8 +18,6 @@ import { ICellRendererParams } from 'ag-grid-community';
   styleUrls: ['./sell.component.scss'],
 })
 export class SellComponent implements OnInit, ICellRendererAngularComp {
-  @Input() selectedPortfolio!: ICellRendererParams;
-
   @ViewChild('content', { static: true })
   content!: TemplateRef<any>;
   modalRef!: NgbModalRef;
@@ -25,19 +26,29 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
   price!: number;
   quantity!: number;
   userBalance!: number;
-  totalAmount: number = 0;
+  totalAmount: any = 0;
   currentPortfolio!: string;
+  currentUserId!: number;
 
   private params: any;
 
-  constructor(private modalService: NgbModal) {}
+  constructor(
+    private modalService: NgbModal,
+    private userService: UserService,
+    private assetService: AssetService,
+    private sessionService: SessionService
+  ) {}
 
   refresh(params: ICellRendererParams) {
+    this.params = params;
+    this.setUserFund();
     return true;
   }
 
   agInit(params: ICellRendererParams): void {
     this.params = params;
+    console.log('agInit params', params);
+    this.setUserFund();
     this.currentPortfolio = params.data.portfolio;
   }
 
@@ -49,11 +60,18 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
     });
   }
 
+  getMaxQuantity(): number {
+    return this.params.data.quantity;
+  }
+
   calculateTotal(): void {
     if (this.quantity < 0 || !this.validateQuantity()) {
       this.quantity = 0;
     }
-    this.totalAmount = this.quantity * this.price;
+    if (this.quantity > this.params.data.quantity) {
+      this.quantity = this.params.data.quantity;
+    }
+    this.totalAmount = (this.quantity * this.price).toFixed(4);
   }
 
   validateQuantity(): boolean {
@@ -62,19 +80,31 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
 
   instantiateStockData() {
     this.quantity = 0;
-    this.price = this.params.data.price;
-    this.stockNameAndTicker = `${this.params.data.name} (${this.params.data.ticker})`;
-    this.userBalance = 10000; // TODO: replace with the actual data
+    this.price = this.params.data.current_price.toFixed(4);
+    this.stockNameAndTicker = `${this.params.data.name} (${this.params.data.ticker_symbol})`;
+    this.userService.getUserById(this.params.userId).subscribe((user) => {
+      this.userBalance = user.funds;
+    });
   }
 
   // TODO: implement the send order function
   sendOrder() {
-    console.log(this.selectedPortfolio);
-    alert('Order Sent');
+    this.assetService
+      .sellAsset(
+        this.params.data.ticker_symbol,
+        this.quantity,
+        (this.sessionService.getItem('currentUser') as any).portfolio,
+        this.price
+      )
+      .subscribe((response) => {});
   }
 
   openSellWindow() {
     this.open(this.content);
     this.instantiateStockData();
+  }
+
+  private setUserFund() {
+    this.currentUserId = this.params.data.userId;
   }
 }
