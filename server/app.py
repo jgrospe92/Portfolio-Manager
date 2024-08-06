@@ -277,7 +277,16 @@ def real_time_price(ticker_symbol):
         response.status_code = 400
     return response
 
-
+@app.route('/roi/<int:portfolio_id>', methods=['GET'])
+def return_on_investment(portfolio_id):
+    try:
+        roi = calculate_roi(portfolio_id)
+        response = jsonify(roi=roi)
+        response.status_code = 200
+    except Exception as e:
+        response = jsonify(message=str(e))
+        response.status_code = 400
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
