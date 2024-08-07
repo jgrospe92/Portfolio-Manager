@@ -39,17 +39,15 @@ export class ModalComponent implements OnInit {
     },
   ];
 
+  defaultColDef: ColDef = {};
   ngOnInit(): void {}
 
   open(content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, size: 'lg' });
   }
   // TODO: Replace this method with the actual implementation
   close() {
     this.modalService.dismissAll();
-    setTimeout(() => {
-      location.reload();
-    }, 500);
   }
 
   onGridReady(params: any) {
@@ -68,56 +66,4 @@ export class ModalComponent implements OnInit {
   hasRowData(): boolean {
     return this.gridApi && this.gridApi.getDisplayedRowCount() > 0;
   }
-
-  // TODO: Implement this method
-  private async loadRealTimePrices(): Promise<void> {
-    if (!this.rowData) {
-      console.error('rowData is not defined');
-      return;
-    }
-
-    const tickers = this.rowData.map((row) => row.ticker);
-    if (!tickers || tickers.length === 0) {
-      console.error('No tickers found');
-      return;
-    }
-
-    try {
-      const pricePromises = tickers.map((ticker) =>
-        this.loadRealTimePrice(ticker)
-      );
-      const prices = await Promise.all(pricePromises);
-
-      this.rowData = this.rowData.map((row, index) => ({
-        ...row,
-        prices: prices[index],
-      }));
-
-      console.log('prices now, ', prices);
-      console.log('grid now, ', this.gridApi);
-      // Refresh the grid to show the real-time prices
-      if (this.gridApi) {
-        this.gridApi.setRowData(this.rowData);
-      } else {
-        console.error('gridApi is not defined');
-      }
-    } catch (error) {
-      console.error('Error loading real-time prices:', error);
-    }
-  }
-
-  private loadRealTimePrice(ticker: string): Promise<number> {
-    return new Promise((resolve, reject) => {
-      this.assetService.getRealTimePrice(ticker).subscribe(
-        (data) => {
-          resolve(data.price);
-          console.log('data price', data.price);
-        },
-        (error) => {
-          reject(error);
-        }
-      );
-    });
-  }
-  // ----
 }
