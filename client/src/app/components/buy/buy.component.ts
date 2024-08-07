@@ -50,6 +50,7 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
   agInit(params: ICellRendererParams): void {
     this.loadUserPortfolios();
     this.params = params;
+    console.log('params', params);
   }
   refresh(params: ICellRendererParams) {
     this.params = params;
@@ -103,17 +104,15 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
     var qty = this.quantity;
     var portfolio_id = this.portfolios.indexOf(this.selectedPortfolio) + 1;
     var price = this.price;
+
     this.assetService
       .buyAsset(name, type, ticker_symbol, qty, portfolio_id, price)
       .subscribe((data) => {
-        console.log(data, data);
         if (data.status === 'success') {
           this.portfolioService
             .getPortfolioAssetsByID(portfolio_id)
             .subscribe((portfolio) => {
-              console.log(':portfolio', portfolio);
-              console.log('this.params.api', this.params.api);
-              // this.params.api.setRowData(portfolio);
+              this.sessionService.setItem('portfolioID', portfolio_id);
             });
         }
       });

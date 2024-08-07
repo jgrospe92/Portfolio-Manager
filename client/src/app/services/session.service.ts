@@ -32,4 +32,8 @@ export class SessionService {
   clear(): void {
     sessionStorage.clear();
   }
+
+  clearItemValue(key: string): void {
+    this.setItem(key, null);
+  }
 }

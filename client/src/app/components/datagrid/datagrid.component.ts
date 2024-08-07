@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ColDef, ValueFormatterFunc } from 'ag-grid-community'; // Column Definition Type Interface
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { SellComponent } from '../sell/sell.component';
@@ -30,6 +30,7 @@ export class DatagridComponent implements OnInit {
 
   @Input() currentPortfolio!: string;
   @Input() rowData!: any[];
+  @Output() parentGrid = new EventEmitter<any>();
 
   suppressAggFuncInHeader: boolean = true;
 
@@ -38,6 +39,7 @@ export class DatagridComponent implements OnInit {
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+    this.parentGrid.emit(this.gridApi);
     this.gridApi.sizeColumnsToFit();
   }
 

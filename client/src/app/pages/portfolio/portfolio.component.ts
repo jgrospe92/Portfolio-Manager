@@ -12,6 +12,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./portfolio.component.scss'],
 })
 export class PortfolioComponent implements OnInit {
+  parentGridApi!: any;
   dropdownItems!: string[];
   rowData: any[] = [];
   portfolios: Portfolio[] = [];
@@ -20,6 +21,7 @@ export class PortfolioComponent implements OnInit {
   currentUserId!: number;
   currentPortfolio!: string;
   currentUserFunds!: number;
+  parentGrid!: any;
 
   constructor(
     private portfolio: PortfolioService,
@@ -48,6 +50,10 @@ export class PortfolioComponent implements OnInit {
       .subscribe((assets: any[]) => {
         this.rowData = assets;
       });
+  }
+
+  getParentGridApi(data: any) {
+    this.parentGrid = data;
   }
 
   getPortfolioIdByName(name: string): number {
