@@ -25,6 +25,9 @@ export class PortfolioComponent implements OnInit {
   currentUserFunds!: number;
   parentGrid!: any;
 
+  realizedPnL: any = '';
+  unrealizedPnL: any = '';
+
   constructor(
     private portfolio: PortfolioService,
     private user: UserService,
@@ -58,6 +61,18 @@ export class PortfolioComponent implements OnInit {
     this.parentGrid = data;
   }
 
+  private getPortfolioRealizedPnL(portfolio_id: number) {
+    this.portfolio.getPortfolioRealizedPnL(portfolio_id).subscribe((data) => {
+      this.realizedPnL = this.numberFormatter(data.realized_profit_loss);
+    });
+  }
+
+  private getPortfolioUnrealizedPnL(portfolio_id: number) {
+    this.portfolio.getUnrealizedPortfolioPnL(portfolio_id).subscribe((data) => {
+      this.unrealizedPnL = this.numberFormatter(data.unrealized_profit_loss);
+    });
+  }
+
   getPortfolioIdByName(name: string): number {
     let portfolios = this.portfolios;
     for (const portfolio of portfolios) {
@@ -65,7 +80,7 @@ export class PortfolioComponent implements OnInit {
         return portfolio.portfolio_id;
       }
     }
-    return 0; // Return null if no matching portfolio is found
+    return -1;
   }
 
   onSelectedPortfolio(portfolio_name: string) {
@@ -77,5 +92,15 @@ export class PortfolioComponent implements OnInit {
       portfolio: this.selectedPortfolioId,
     });
     this.setRowData(this.selectedPortfolioId);
+    this.getPortfolioRealizedPnL(this.selectedPortfolioId);
+    this.getPortfolioUnrealizedPnL(this.selectedPortfolioId);
+  }
+
+  private numberFormatter(value: any) {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'decimal',
+      maximumFractionDigits: 2,
+    });
+    return value == null ? 'NA' : formatter.format(value);
   }
 }
