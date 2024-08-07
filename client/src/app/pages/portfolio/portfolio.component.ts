@@ -16,6 +16,8 @@ export class PortfolioComponent implements OnInit {
   dropdownItems!: string[];
   rowData: any[] = [];
   portfolios: Portfolio[] = [];
+  selectedPortfolioId: number = -1;
+  userCanBuy: boolean = false;
   current_user: number = 1;
   currentUser!: string;
   currentUserId!: number;
@@ -67,12 +69,13 @@ export class PortfolioComponent implements OnInit {
   }
 
   onSelectedPortfolio(portfolio_name: string) {
-    const portfolioId = this.getPortfolioIdByName(portfolio_name);
+    this.userCanBuy = true;
+    this.selectedPortfolioId = this.getPortfolioIdByName(portfolio_name);
     this.sessionService.setItem('currentUser', {
       id: this.currentUserId,
       name: this.currentUser,
-      portfolio: portfolioId,
+      portfolio: this.selectedPortfolioId,
     });
-    this.setRowData(portfolioId);
+    this.setRowData(this.selectedPortfolioId);
   }
 }

@@ -69,7 +69,6 @@ export class ModalComponent implements OnInit {
   close() {
     this.rowData = [];
     this.modalService.dismissAll();
-
     var portfolioID = this.sessionService.getItem('portfolioID');
     if (portfolioID) {
       this.portfolioService

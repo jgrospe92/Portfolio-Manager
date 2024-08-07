@@ -6,7 +6,10 @@
       [items]="dropdownItems"
       (itemSelected)="onSelectedPortfolio($event)"
     ></app-dropdown>
-    <app-modal [parentGridApi]="parentGrid" [isBuyValid]="true"></app-modal>
+    <app-modal
+      [parentGridApi]="parentGrid"
+      [isBuyValid]="userCanBuy"
+    ></app-modal>
   </div>
   <div class="mt-3">
     <app-datagrid
