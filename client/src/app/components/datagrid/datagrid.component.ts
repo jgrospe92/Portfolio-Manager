@@ -1,19 +1,7 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
-import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
-import {
-  NgbModal,
-  NgbModalConfig,
-  NgbModalRef,
-} from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, OnInit } from '@angular/core';
+import { ColDef, ValueFormatterFunc } from 'ag-grid-community'; // Column Definition Type Interface
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { SellComponent } from '../sell/sell.component';
-import { YhooFinanceService } from 'src/app/services/yhoo-finance.service';
 import { SessionService } from 'src/app/services/session.service';
 
 @Component({
@@ -23,12 +11,7 @@ import { SessionService } from 'src/app/services/session.service';
   providers: [NgbModalConfig, NgbModal],
 })
 export class DatagridComponent implements OnInit {
-  constructor(
-    config: NgbModalConfig,
-    private modalService: NgbModal,
-    private yhoofinance: YhooFinanceService,
-    private sessionService: SessionService
-  ) {
+  constructor(config: NgbModalConfig, private sessionService: SessionService) {
     // customize default values of modals used by this component tree
     config.backdrop = 'static';
     config.keyboard = false;
@@ -40,26 +23,39 @@ export class DatagridComponent implements OnInit {
   @Input() currentPortfolio!: string;
   @Input() rowData!: any[];
 
+  suppressAggFuncInHeader: boolean = true;
+
+  statusBar = {
+    statusPanels: [
+      { statusPanel: 'agTotalAndFilteredRowCountComponent' },
+      { statusPanel: 'agTotalRowCountComponent' },
+      { statusPanel: 'agFilteredRowCountComponent' },
+      { statusPanel: 'agSelectedRowCountComponent' },
+      { statusPanel: 'agAggregationComponent' },
+    ],
+  };
+
   ngOnInit(): void {}
 
   onGridReady(params: any) {
-    console.log('Row Data:', this.rowData);
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     this.gridApi.sizeColumnsToFit();
   }
 
   defaultColDef: ColDef = {
+    flex: 1,
     filter: true,
     floatingFilter: true,
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   };
 
   colDefs: ColDef[] = [
     { field: 'name' },
     { field: 'type' },
-    { field: 'ticker_symbol', headerName: 'Ticker Symbol' },
-    { field: 'quantity' },
-    { field: 'average_price', headerName: 'Weighed average price' },
+    { field: 'ticker_symbol', headerName: 'Ticker' },
+    { field: 'quantity', maxWidth: 100, headerName: 'Qty' },
+    { field: 'average_price', headerName: 'Weighed AVG' },
     {
       field: 'projected_profit',
       headerName: 'Project P&L',
@@ -75,11 +71,13 @@ export class DatagridComponent implements OnInit {
       headerName: 'Market Price',
       valueFormatter: (params) => params.value.toFixed(4),
     },
-    { field: 'average_price', headerName: 'Average Price' },
+    { field: 'average_price', headerName: 'AVG Price' },
     {
       field: 'sell',
       headerName: 'Sell',
       cellRenderer: SellComponent,
+      floatingFilter: false,
+      maxWidth: 100,
       cellRendererParams: { portfolio: this.currentPortfolio, userId: 1 },
     },
   ];

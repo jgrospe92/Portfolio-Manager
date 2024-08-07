@@ -96,9 +96,6 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
     return Number.isInteger(this.quantity);
   }
 
-  getUserBalance() {}
-
-  // TODO: implement the send order function
   sendOrder() {
     var name = this.params.data.name;
     var type = this.params.data.type;
@@ -106,10 +103,21 @@ export class BuyComponent implements OnInit, ICellRendererAngularComp {
     var qty = this.quantity;
     var portfolio_id = this.portfolios.indexOf(this.selectedPortfolio) + 1;
     var price = this.price;
-
     this.assetService
       .buyAsset(name, type, ticker_symbol, qty, portfolio_id, price)
-      .subscribe((data) => {});
+      .subscribe((data) => {
+        console.log(data, data);
+        if (data.status === 'success') {
+          this.portfolioService
+            .getPortfolioAssetsByID(portfolio_id)
+            .subscribe((portfolio) => {
+              console.log(':portfolio', portfolio);
+              console.log('this.params.api', this.params.api);
+              // this.params.api.setRowData(portfolio);
+            });
+        }
+      });
+
     this.modalRef.close();
   }
 }
