@@ -48,6 +48,7 @@ export class DatagridComponent implements OnInit {
     filter: true,
     floatingFilter: true,
     cellRenderer: 'agAnimateShowChangeCellRenderer',
+    enableCellChangeFlash: true,
   };
 
   colDefs: ColDef[] = [
@@ -64,11 +65,17 @@ export class DatagridComponent implements OnInit {
       field: 'projected_profit',
       headerName: 'Project P&L',
       valueFormatter: numberFormatter,
+      cellStyle: (params) => {
+        return params.value < 0 ? { color: 'red' } : { color: 'green' };
+      },
     },
     {
       field: 'realized_profit',
       headerName: 'Realized P&L',
       valueFormatter: numberFormatter,
+      cellStyle: (params) => {
+        return params.value < 0 ? { color: 'red' } : { color: 'green' };
+      },
     },
     {
       field: 'current_price',
