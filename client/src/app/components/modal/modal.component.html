@@ -21,7 +21,7 @@
         type="button"
         (click)="fetchStock(searchInput.value)"
         class="btn btn-dark ms-2"
-        [disabled]="!searchInput.value"
+        [disabled]="isSearching || !searchInput.value"
       >
         Search
       </button>

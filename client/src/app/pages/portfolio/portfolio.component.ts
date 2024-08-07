@@ -12,14 +12,18 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./portfolio.component.scss'],
 })
 export class PortfolioComponent implements OnInit {
+  parentGridApi!: any;
   dropdownItems!: string[];
   rowData: any[] = [];
   portfolios: Portfolio[] = [];
+  selectedPortfolioId: number = -1;
+  userCanBuy: boolean = false;
   current_user: number = 1;
   currentUser!: string;
   currentUserId!: number;
   currentPortfolio!: string;
   currentUserFunds!: number;
+  parentGrid!: any;
 
   constructor(
     private portfolio: PortfolioService,
@@ -50,6 +54,10 @@ export class PortfolioComponent implements OnInit {
       });
   }
 
+  getParentGridApi(data: any) {
+    this.parentGrid = data;
+  }
+
   getPortfolioIdByName(name: string): number {
     let portfolios = this.portfolios;
     for (const portfolio of portfolios) {
@@ -61,12 +69,13 @@ export class PortfolioComponent implements OnInit {
   }
 
   onSelectedPortfolio(portfolio_name: string) {
-    const portfolioId = this.getPortfolioIdByName(portfolio_name);
+    this.userCanBuy = true;
+    this.selectedPortfolioId = this.getPortfolioIdByName(portfolio_name);
     this.sessionService.setItem('currentUser', {
       id: this.currentUserId,
       name: this.currentUser,
-      portfolio: portfolioId,
+      portfolio: this.selectedPortfolioId,
     });
-    this.setRowData(portfolioId);
+    this.setRowData(this.selectedPortfolioId);
   }
 }
