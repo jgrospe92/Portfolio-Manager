@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -20,30 +20,23 @@ import { DateAndTimeComponent } from './components/date-and-time/date-and-time.c
 import { BuyComponent } from './components/buy/buy.component';
 import { SellComponent } from './components/sell/sell.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    PageNotFoundComponent,
-    NavComponent,
-    PortfolioComponent,
-    DatagridComponent,
-    DynamicBtnComponent,
-    ModalComponent,
-    DateAndTimeComponent,
-    BuyComponent,
-    SellComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgbModule,
-    AgGridAngular,
-    DropdownComponent,
-    HttpClientModule,
-    FormsModule,
-  ],
-  providers: [CommunicationService],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [
+        AppComponent,
+        HomeComponent,
+        PageNotFoundComponent,
+        NavComponent,
+        PortfolioComponent,
+        DatagridComponent,
+        DynamicBtnComponent,
+        ModalComponent,
+        DateAndTimeComponent,
+        BuyComponent,
+        SellComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        NgbModule,
+        AgGridAngular,
+        DropdownComponent,
+        FormsModule], providers: [CommunicationService, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {}
