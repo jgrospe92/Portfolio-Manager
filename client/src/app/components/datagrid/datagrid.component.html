@@ -1,12 +1,13 @@
-<ag-grid-angular
-  #agGrid
-  id="myGrid"
-  class="ag-theme-quartz"
-  style="max-width: 100%; height: 500px"
-  [rowData]="rowData"
-  [columnDefs]="colDefs"
-  [defaultColDef]="defaultColDef"
-  [statusBar]="statusBar"
-  [suppressAggFuncInHeader]="suppressAggFuncInHeader"
-  (gridReady)="onGridReady($event)"
-></ag-grid-angular>
+<div class="ag-theme-balham-dark">
+  <ag-grid-angular
+    #agGrid
+    id="myGrid"
+    class="ag-theme-quartz"
+    style="max-width: 100%; height: 500px"
+    [rowData]="rowData"
+    [columnDefs]="colDefs"
+    [defaultColDef]="defaultColDef"
+    [suppressAggFuncInHeader]="suppressAggFuncInHeader"
+    (gridReady)="onGridReady($event)"
+  ></ag-grid-angular>
+</div>

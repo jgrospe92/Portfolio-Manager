@@ -118,7 +118,6 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
 
   close() {
     this.modalService.dismissAll();
-    this.params.api.setRowData([]);
   }
 
   private setUserFund() {

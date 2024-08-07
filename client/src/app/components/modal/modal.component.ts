@@ -1,9 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
+import { ColDef, ValueFormatterFunc, RowModelType } from 'ag-grid-community'; // Column Definition Type Interface
 import { BuyComponent } from '../buy/buy.component';
 import { CommunicationService } from 'src/app/services/communication.service';
 import { AssetService } from 'src/app/services/asset.service';
+
+const numberFormatter: ValueFormatterFunc = (params) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'decimal',
+    maximumFractionDigits: 2,
+  });
+  return params.value == null ? 'NA' : formatter.format(params.value);
+};
 
 @Component({
   selector: 'app-modal',
@@ -24,6 +32,7 @@ export class ModalComponent implements OnInit {
 
   @Input() isBuyValid!: boolean;
   private gridApi!: any;
+  isSearching: boolean = false;
 
   rowData: any[] | null = [];
 
@@ -31,7 +40,7 @@ export class ModalComponent implements OnInit {
     { headerName: 'Name', field: 'name' },
     { headerName: 'Ticker', field: 'ticker' },
     { headerName: 'Instrument', field: 'type' },
-    { headerName: 'Price', field: 'price' },
+    { headerName: 'Price', field: 'price', valueFormatter: numberFormatter },
     {
       headerName: 'Buy',
       field: 'buy',
@@ -39,13 +48,19 @@ export class ModalComponent implements OnInit {
     },
   ];
 
-  defaultColDef: ColDef = {};
+  defaultColDef: ColDef = {
+    minWidth: 100,
+  };
+
+  public cacheBlockSize = 20;
+  public maxBlocksInCache = 10;
+
   ngOnInit(): void {}
 
   open(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg' });
   }
-  // TODO: Replace this method with the actual implementation
+
   close() {
     this.modalService.dismissAll();
   }
@@ -56,10 +71,13 @@ export class ModalComponent implements OnInit {
   }
 
   fetchStock(name: any) {
+    this.isSearching = true;
+    this.gridApi.showLoadingOverlay();
     this.communication
       .getMarketAssetsByName(name)
       .subscribe((assets: any[]) => {
         this.rowData = assets;
+        this.isSearching = false;
       });
   }
 
