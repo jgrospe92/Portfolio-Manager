@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -19,6 +19,9 @@ import { ModalComponent } from './components/modal/modal.component';
 import { DateAndTimeComponent } from './components/date-and-time/date-and-time.component';
 import { BuyComponent } from './components/buy/buy.component';
 import { SellComponent } from './components/sell/sell.component';
+import { LineChartComponent } from './components/line-chart/line-chart.component';
+import { PieChartComponent } from './components/pie-chart/pie-chart.component';
+import { SummaryComponent } from './pages/summary/summary.component';
 
 @NgModule({ declarations: [
         AppComponent,
