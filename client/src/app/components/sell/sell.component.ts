@@ -29,7 +29,6 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
   userBalance!: number;
   totalAmount: any = 0;
   currentPortfolio!: string;
-  currentUserId!: number;
 
   newRowData!: any[];
 
@@ -45,13 +44,11 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
 
   refresh(params: ICellRendererParams) {
     this.params = params;
-    this.setUserFund();
     return true;
   }
 
   agInit(params: ICellRendererParams): void {
     this.params = params;
-    this.setUserFund();
     this.currentPortfolio = params.data.portfolio;
   }
 
@@ -85,9 +82,11 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
     this.quantity = 0;
     this.price = this.params.data.current_price.toFixed(4);
     this.stockNameAndTicker = `${this.params.data.name} (${this.params.data.ticker_symbol})`;
-    this.userService.getUserById(this.params.userId).subscribe((user) => {
-      this.userBalance = user.funds;
-    });
+    this.userService
+      .getUserById((this.sessionService.getItem('currentUser') as any).id)
+      .subscribe((user) => {
+        this.userBalance = user.funds;
+      });
   }
 
   // TODO: implement the send order function
@@ -118,9 +117,5 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
 
   close() {
     this.modalService.dismissAll();
-  }
-
-  private setUserFund() {
-    this.currentUserId = this.params.data.userId;
   }
 }
