@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { AppRoutingModule } from './app-routing.module';
@@ -24,22 +24,29 @@ import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { SummaryComponent } from './pages/summary/summary.component';
 
 @NgModule({ declarations: [
-        AppComponent,
-        HomeComponent,
-        PageNotFoundComponent,
-        NavComponent,
-        PortfolioComponent,
-        DatagridComponent,
-        DynamicBtnComponent,
-        ModalComponent,
-        DateAndTimeComponent,
-        BuyComponent,
-        SellComponent,
+  AppComponent,
+  HomeComponent,
+  PageNotFoundComponent,
+  NavComponent,
+  PortfolioComponent,
+  DatagridComponent,
+  DynamicBtnComponent,
+  ModalComponent,
+  DateAndTimeComponent,
+  BuyComponent,
+  SellComponent,
+  LineChartComponent,
+  PieChartComponent,
+  SummaryComponent,
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        AppRoutingModule,
-        NgbModule,
-        AgGridAngular,
-        DropdownComponent,
-        FormsModule], providers: [CommunicationService, provideHttpClient(withInterceptorsFromDi())] })
+    bootstrap: [AppComponent], imports: [
+      BrowserModule,
+      AppRoutingModule,
+      NgbModule,
+      AgGridAngular,
+      DropdownComponent,
+      HttpClientModule,
+      FormsModule,
+      CanvasJSAngularChartsModule
+    ], providers: [CommunicationService, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {}

@@ -4,7 +4,7 @@ import { DataService, HistoricalData } from 'src/app/services/data.service';
 @Component({
   selector: 'app-line-chart',
   templateUrl: './line-chart.component.html',
-  styleUrls: ['./line-chart.component.css']
+  styleUrls: ['./line-chart.component.scss']
 })
 export class LineChartComponent implements OnInit, OnChanges {
   @Input() ticker!: string;
