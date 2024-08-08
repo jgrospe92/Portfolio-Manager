@@ -35,6 +35,20 @@ export class PortfolioService {
       .pipe(shareReplay(1), catchError(this.handleError));
   }
 
+  getPortfolioRealizedPnL(portfolioId: number): Observable<any> {
+    const url = `${this.baseUrl}/realized_profit_loss/${portfolioId}`;
+    return this.http
+      .get(url)
+      .pipe(shareReplay(1), catchError(this.handleError));
+  }
+
+  getUnrealizedPortfolioPnL(portfolioId: number): Observable<any> {
+    const url = `${this.baseUrl}/unrealized_profit_loss/${portfolioId}`;
+    return this.http
+      .get(url)
+      .pipe(shareReplay(1), catchError(this.handleError));
+  }
+
   deletePortfolio(portfolioId: number): Observable<any> {
     const url = `${this.baseUrl}/portfolios/${portfolioId}`;
     return this.http.delete(url).pipe(catchError(this.handleError));

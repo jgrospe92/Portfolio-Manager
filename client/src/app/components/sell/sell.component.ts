@@ -9,6 +9,7 @@ import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { AssetService } from 'src/app/services/asset.service';
+import { PortfolioService } from 'src/app/services/portfolio.service';
 import { SessionService } from 'src/app/services/session.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -30,13 +31,16 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
   currentPortfolio!: string;
   currentUserId!: number;
 
+  newRowData!: any[];
+
   private params: any;
 
   constructor(
     private modalService: NgbModal,
     private userService: UserService,
     private assetService: AssetService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private portfolioService: PortfolioService
   ) {}
 
   refresh(params: ICellRendererParams) {
@@ -47,7 +51,6 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
 
   agInit(params: ICellRendererParams): void {
     this.params = params;
-    console.log('agInit params', params);
     this.setUserFund();
     this.currentPortfolio = params.data.portfolio;
   }
@@ -98,9 +101,13 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
       )
       .subscribe((response) => {
         this.modalRef.close();
-        setTimeout(() => {
-          location.reload();
-        }, 500);
+        var portfolioId = (this.sessionService.getItem('currentUser') as any)
+          .portfolio;
+        this.portfolioService
+          .getPortfolioAssetsByID(portfolioId)
+          .subscribe((portfolio) => {
+            this.params.api.setRowData(portfolio);
+          });
       });
   }
 
@@ -111,9 +118,6 @@ export class SellComponent implements OnInit, ICellRendererAngularComp {
 
   close() {
     this.modalService.dismissAll();
-    setTimeout(() => {
-      location.reload();
-    }, 500);
   }
 
   private setUserFund() {

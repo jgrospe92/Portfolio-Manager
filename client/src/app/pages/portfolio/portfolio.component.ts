@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { IAsset } from 'src/app/models/Asset.model';
 import { Portfolio } from 'src/app/models/Portfolio.model';
 import { CommunicationService } from 'src/app/services/communication.service';
 import { PortfolioService } from 'src/app/services/portfolio.service';
@@ -12,14 +11,21 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./portfolio.component.scss'],
 })
 export class PortfolioComponent implements OnInit {
+  parentGridApi!: any;
   dropdownItems!: string[];
   rowData: any[] = [];
   portfolios: Portfolio[] = [];
+  selectedPortfolioId: number = -1;
+  userCanBuy: boolean = false;
   current_user: number = 1;
   currentUser!: string;
   currentUserId!: number;
   currentPortfolio!: string;
   currentUserFunds!: number;
+  parentGrid!: any;
+
+  realizedPnL: any = '';
+  unrealizedPnL: any = '';
 
   constructor(
     private portfolio: PortfolioService,
@@ -40,6 +46,14 @@ export class PortfolioComponent implements OnInit {
         this.portfolios = portfolios;
         this.dropdownItems = portfolios.map((portfolio) => portfolio.name);
       });
+
+    if (this.selectedPortfolioId) {
+      setInterval(() => {
+        this.getPortfolioRealizedPnL(this.selectedPortfolioId);
+        this.getPortfolioUnrealizedPnL(this.selectedPortfolioId);
+        this.setRowData(this.selectedPortfolioId);
+      }, 5000);
+    }
   }
 
   setRowData(portfolio_id: number) {
@@ -50,6 +64,22 @@ export class PortfolioComponent implements OnInit {
       });
   }
 
+  getParentGridApi(data: any) {
+    this.parentGrid = data;
+  }
+
+  private getPortfolioRealizedPnL(portfolio_id: number) {
+    this.portfolio.getPortfolioRealizedPnL(portfolio_id).subscribe((data) => {
+      this.realizedPnL = this.numberFormatter(data.realized_profit_loss);
+    });
+  }
+
+  private getPortfolioUnrealizedPnL(portfolio_id: number) {
+    this.portfolio.getUnrealizedPortfolioPnL(portfolio_id).subscribe((data) => {
+      this.unrealizedPnL = this.numberFormatter(data.unrealized_profit_loss);
+    });
+  }
+
   getPortfolioIdByName(name: string): number {
     let portfolios = this.portfolios;
     for (const portfolio of portfolios) {
@@ -57,16 +87,27 @@ export class PortfolioComponent implements OnInit {
         return portfolio.portfolio_id;
       }
     }
-    return 0; // Return null if no matching portfolio is found
+    return -1;
   }
 
   onSelectedPortfolio(portfolio_name: string) {
-    const portfolioId = this.getPortfolioIdByName(portfolio_name);
+    this.userCanBuy = true;
+    this.selectedPortfolioId = this.getPortfolioIdByName(portfolio_name);
     this.sessionService.setItem('currentUser', {
       id: this.currentUserId,
       name: this.currentUser,
-      portfolio: portfolioId,
+      portfolio: this.selectedPortfolioId,
     });
-    this.setRowData(portfolioId);
+    this.setRowData(this.selectedPortfolioId);
+    this.getPortfolioRealizedPnL(this.selectedPortfolioId);
+    this.getPortfolioUnrealizedPnL(this.selectedPortfolioId);
+  }
+
+  private numberFormatter(value: any) {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'decimal',
+      maximumFractionDigits: 2,
+    });
+    return value == null ? 'NA' : formatter.format(value);
   }
 }

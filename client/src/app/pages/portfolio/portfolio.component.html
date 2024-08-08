@@ -1,17 +1,30 @@
 <!-- The AG Grid component -->
-<div class="container mt-5">
+<div class="container mt-5 app_layout">
   <h2>Portfolio Manager</h2>
   <div class="portfolio_layout">
     <app-dropdown
       [items]="dropdownItems"
       (itemSelected)="onSelectedPortfolio($event)"
     ></app-dropdown>
-    <app-modal [isBuyValid]="true"></app-modal>
+    <div class="portfolio_PnL m-0">
+      <p>Total Realized PnL : {{ realizedPnL }}</p>
+      <p>
+        Total Unrealized PnL :
+        <span [ngClass]="unrealizedPnL < 0 ? 'text-danger' : 'text-success'">{{
+          unrealizedPnL
+        }}</span>
+      </p>
+    </div>
+    <app-modal
+      [parentGridApi]="parentGrid"
+      [isBuyValid]="userCanBuy"
+    ></app-modal>
   </div>
-  <div class="mt-3">
+  <div class="mt-2">
     <app-datagrid
       [currentPortfolio]="currentPortfolio"
       [rowData]="rowData"
+      (parentGrid)="getParentGridApi($event)"
     ></app-datagrid>
   </div>
   <footer>

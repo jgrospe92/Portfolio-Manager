@@ -57,7 +57,6 @@ export class CommunicationService {
 
   getMarketAssetsByName(name: string): Observable<any> {
     const url = `${this.baseUrl}/market_assets/${name}`;
-    console.log(url)
     return this.http.get(url).pipe(catchError(this.handleError));
   }
 
