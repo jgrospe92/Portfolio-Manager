@@ -1,0 +1,45 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .chart-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 40px; /* Increased space between sections */
+  }
+  
+  .chart-container {
+    flex: 1;
+    margin: 0 20px; /* Space around each chart */
+  }
+  
+  .shares-info {
+    flex: 0 0 200px; /* Fixed width for the box */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-align: center;
+    margin-left: 20px; /* Ensure there is space between the pie chart and the info box */
+    z-index: 10; /* Ensure the box is in front */
+    position: relative; /* Position relative to apply z-index */
+  }
+  
+  .shares-info h3 {
+    margin: 0;
+    font-size: 18px;
+    font-family: 'Arial', sans-serif; /* Updated font */
+  }
+  
+  .shares-info p {
+    margin: 5px 0 0;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
