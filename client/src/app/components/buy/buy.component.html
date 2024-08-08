@@ -58,7 +58,9 @@
       <button
         type="button"
         class="btn btn-success btn-sm me-2"
-        [disabled]="quantity === 0 || totalAmount > userBalance"
+        [disabled]="
+          quantity === 0 || totalAmount > userBalance || !selectedPortfolio
+        "
         (click)="sendOrder()"
       >
         Send Order
