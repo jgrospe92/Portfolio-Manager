@@ -1,20 +1,22 @@
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-  Component,
-  Input,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
-import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
-import {
-  NgbModal,
-  NgbModalConfig,
-  NgbModalRef,
-} from '@ng-bootstrap/ng-bootstrap';
+  ColDef,
+  ValueFormatterFunc,
+  GetRowIdFunc,
+  GetRowIdParams,
+} from 'ag-grid-community'; // Column Definition Type Interface
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { SellComponent } from '../sell/sell.component';
-import { YhooFinanceService } from 'src/app/services/yhoo-finance.service';
 import { SessionService } from 'src/app/services/session.service';
+import { PortfolioService } from 'src/app/services/portfolio.service';
+
+const numberFormatter: ValueFormatterFunc = (params) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'decimal',
+    maximumFractionDigits: 2,
+  });
+  return params.value == null ? 'NA' : formatter.format(params.value);
+};
 
 @Component({
   selector: 'app-datagrid',
@@ -25,9 +27,8 @@ import { SessionService } from 'src/app/services/session.service';
 export class DatagridComponent implements OnInit {
   constructor(
     config: NgbModalConfig,
-    private modalService: NgbModal,
-    private yhoofinance: YhooFinanceService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private portfolioService: PortfolioService
   ) {
     // customize default values of modals used by this component tree
     config.backdrop = 'static';
@@ -39,48 +40,72 @@ export class DatagridComponent implements OnInit {
 
   @Input() currentPortfolio!: string;
   @Input() rowData!: any[];
+  @Output() parentGrid = new EventEmitter<any>();
+
+  suppressAggFuncInHeader: boolean = true;
+  getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.ticker;
 
   ngOnInit(): void {}
 
   onGridReady(params: any) {
-    console.log('Row Data:', this.rowData);
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+    this.parentGrid.emit(this.gridApi);
     this.gridApi.sizeColumnsToFit();
   }
 
   defaultColDef: ColDef = {
+    flex: 1,
     filter: true,
     floatingFilter: true,
+    enableCellChangeFlash: true,
   };
 
   colDefs: ColDef[] = [
     { field: 'name' },
     { field: 'type' },
-    { field: 'ticker_symbol', headerName: 'Ticker Symbol' },
-    { field: 'quantity' },
-    { field: 'average_price', headerName: 'Weighed average price' },
+    { field: 'ticker_symbol', headerName: 'Ticker' },
+    { field: 'quantity', maxWidth: 100, headerName: 'Qty' },
+    {
+      field: 'average_price',
+      headerName: 'Weighed AVG',
+      valueFormatter: numberFormatter,
+    },
     {
       field: 'projected_profit',
       headerName: 'Project P&L',
-      valueFormatter: (params) => params.value.toFixed(4),
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
+      valueFormatter: numberFormatter,
+      cellStyle: (params) => {
+        return params.value < 0 ? { color: 'red' } : { color: 'green' };
+      },
     },
     {
       field: 'realized_profit',
       headerName: 'Realized P&L',
-      valueFormatter: (params) => params.value.toFixed(4),
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
+      valueFormatter: numberFormatter,
+      cellStyle: (params) => {
+        return params.value < 0 ? { color: 'red' } : { color: 'green' };
+      },
     },
     {
       field: 'current_price',
       headerName: 'Market Price',
-      valueFormatter: (params) => params.value.toFixed(4),
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
+      valueFormatter: numberFormatter,
     },
-    { field: 'average_price', headerName: 'Average Price' },
+    {
+      field: 'average_price',
+      headerName: 'AVG Price',
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
+    },
     {
       field: 'sell',
       headerName: 'Sell',
       cellRenderer: SellComponent,
-      cellRendererParams: { portfolio: this.currentPortfolio, userId: 1 },
+      floatingFilter: false,
+      maxWidth: 100,
     },
   ];
 

@@ -3,7 +3,18 @@
   justify-content: space-between;
 }
 
+.portfolio_PnL {
+  display: flex;
+  width: 40%;
+  justify-content: space-between;
+  text-align: center !important;
+}
+
 footer {
   display: flex;
   justify-content: space-between;
+}
+
+.portfolio_PnL {
+  color: black !important;
 }

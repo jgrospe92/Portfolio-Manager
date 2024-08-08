@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from db_manager import *
 from flask_cors import CORS
 
@@ -113,7 +113,8 @@ def buy_asset():
     quantity = float(data['quantity'])
     portfolio_id = int(data['portfolio_id'])
     price_per_unit = float(data["price"])
-    # price_per_unit = float(get_asset_price(ticker_symbol)) 
+    # price_per_unit = float(get_asset_price(ticker_symbol))
+    status_code = 0
     
     try:
         # Ensure asset is added to the Assets table
@@ -140,8 +141,9 @@ def buy_asset():
         # Deduct the total cost from user's funds
         new_funds = user_funds - total_cost
         update_user_funds(portfolio_id, new_funds)
-
-        response = jsonify(message="Asset bought successfully")
+        
+      
+        response = jsonify(message="Asset bought successfully",status='success')
         response.status_code = 201
     except Exception as e:
         response = jsonify(message=str(e))
@@ -168,8 +170,7 @@ def sell_asset():
     quantity = float(data['quantity'])
     portfolio_id = int(data['portfolio_id'])
     price_per_unit = float(get_asset_price(ticker_symbol))
-    print('data', data)
-
+  
     try:
         # Fetch the asset ID
         asset_id = get_asset_id(ticker_symbol)
@@ -206,7 +207,6 @@ def sell_asset():
 @app.route('/market_assets/<string:name>', methods=['GET'])
 def get_market_assets(name):
     try:
-        print('whayaya')
         assets = search_stocks_and_get_prices(name)
         response = jsonify(assets)
         response.status_code = 200
