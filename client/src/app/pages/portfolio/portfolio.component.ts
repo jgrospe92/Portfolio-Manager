@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { IAsset } from 'src/app/models/Asset.model';
 import { Portfolio } from 'src/app/models/Portfolio.model';
 import { CommunicationService } from 'src/app/services/communication.service';
 import { PortfolioService } from 'src/app/services/portfolio.service';
@@ -47,6 +46,14 @@ export class PortfolioComponent implements OnInit {
         this.portfolios = portfolios;
         this.dropdownItems = portfolios.map((portfolio) => portfolio.name);
       });
+
+    if (this.selectedPortfolioId) {
+      setInterval(() => {
+        this.getPortfolioRealizedPnL(this.selectedPortfolioId);
+        this.getPortfolioUnrealizedPnL(this.selectedPortfolioId);
+        this.setRowData(this.selectedPortfolioId);
+      }, 5000);
+    }
   }
 
   setRowData(portfolio_id: number) {

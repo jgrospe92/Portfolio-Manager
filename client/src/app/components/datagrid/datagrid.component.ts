@@ -1,8 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ColDef, ValueFormatterFunc } from 'ag-grid-community'; // Column Definition Type Interface
+import {
+  ColDef,
+  ValueFormatterFunc,
+  GetRowIdFunc,
+  GetRowIdParams,
+} from 'ag-grid-community'; // Column Definition Type Interface
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { SellComponent } from '../sell/sell.component';
 import { SessionService } from 'src/app/services/session.service';
+import { PortfolioService } from 'src/app/services/portfolio.service';
 
 const numberFormatter: ValueFormatterFunc = (params) => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -19,7 +25,11 @@ const numberFormatter: ValueFormatterFunc = (params) => {
   providers: [NgbModalConfig, NgbModal],
 })
 export class DatagridComponent implements OnInit {
-  constructor(config: NgbModalConfig, private sessionService: SessionService) {
+  constructor(
+    config: NgbModalConfig,
+    private sessionService: SessionService,
+    private portfolioService: PortfolioService
+  ) {
     // customize default values of modals used by this component tree
     config.backdrop = 'static';
     config.keyboard = false;
@@ -33,6 +43,7 @@ export class DatagridComponent implements OnInit {
   @Output() parentGrid = new EventEmitter<any>();
 
   suppressAggFuncInHeader: boolean = true;
+  getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.ticker;
 
   ngOnInit(): void {}
 
@@ -47,7 +58,6 @@ export class DatagridComponent implements OnInit {
     flex: 1,
     filter: true,
     floatingFilter: true,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
     enableCellChangeFlash: true,
   };
 
@@ -64,6 +74,7 @@ export class DatagridComponent implements OnInit {
     {
       field: 'projected_profit',
       headerName: 'Project P&L',
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
       valueFormatter: numberFormatter,
       cellStyle: (params) => {
         return params.value < 0 ? { color: 'red' } : { color: 'green' };
@@ -72,6 +83,7 @@ export class DatagridComponent implements OnInit {
     {
       field: 'realized_profit',
       headerName: 'Realized P&L',
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
       valueFormatter: numberFormatter,
       cellStyle: (params) => {
         return params.value < 0 ? { color: 'red' } : { color: 'green' };
@@ -80,9 +92,14 @@ export class DatagridComponent implements OnInit {
     {
       field: 'current_price',
       headerName: 'Market Price',
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
       valueFormatter: numberFormatter,
     },
-    { field: 'average_price', headerName: 'AVG Price' },
+    {
+      field: 'average_price',
+      headerName: 'AVG Price',
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
+    },
     {
       field: 'sell',
       headerName: 'Sell',
