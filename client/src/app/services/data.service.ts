@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 export interface HistoricalData {
   date: string;
@@ -16,34 +17,25 @@ export interface HistoricalData {
   providedIn: 'root'
 })
 export class DataService {
-  private baseUrl = 'https://www.alphavantage.co/query?';
-  private apiKey = 'FEL6NGU9QU6ZQ0KQ';
+  private readonly baseUrl: string = environment.serverUrl;
+
 
   constructor(private http: HttpClient) {}
-
+  private httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
   getHistoricalData(ticker: string): Observable<HistoricalData[]> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    };
+    const url = `${this.baseUrl}/historical-data/${ticker}`;
 
-    const url = `${this.baseUrl}function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=${ticker}&apikey=${this.apiKey}`;
-    return this.http.get<any>(url, httpOptions).pipe(
-      map(response => {
-        const timeSeries = response['Monthly Adjusted Time Series'];
-        if (!timeSeries) {
-          console.error('No Monthly Adjusted Time Series in API response');
-          return [];
-        }
-
-        return Object.keys(timeSeries).map(date => ({
-          date,
-          open: parseFloat(timeSeries[date]['1. open']),
-          high: parseFloat(timeSeries[date]['2. high']),
-          low: parseFloat(timeSeries[date]['3. low']),
-          close: parseFloat(timeSeries[date]['4. close']),
-          volume: parseFloat(timeSeries[date]['5. volume'])
+    return this.http.get<HistoricalData[]>(url, this.httpOptions).pipe(
+      map((response: HistoricalData[]) => {
+        return response.map((item: HistoricalData) => ({
+          date: item.date,
+          open: item.open,
+          high: item.high,
+          low: item.low,
+          close: item.close,
+          volume: item.volume
         }));
       })
     );

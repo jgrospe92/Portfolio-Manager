@@ -19,7 +19,7 @@ export class LineChartComponent implements OnInit, OnChanges {
     zoomEnabled: true,
     exportEnabled: true,
     title: {
-      text: 'Stock Closing Price'
+      text: 'Stock Closing Price '
     },
     axisY: {
       title: 'Closing Price (in USD)',
@@ -56,11 +56,14 @@ export class LineChartComponent implements OnInit, OnChanges {
 
         this.dataService.getHistoricalData(this.ticker).subscribe(
             (data: HistoricalData[]) => {
+              console.log(data)
                 this.dps = data.map((item: HistoricalData) => ({
                     x: new Date(item.date), // The date
                     y: item.close // Only the closing price
                 }));
                 this.chartOptions.data[0].dataPoints = this.dps;
+                this.chartOptions.title.text = 'Stock Closing Price ' + this.ticker;
+
                 this.chartOptions = { ...this.chartOptions }; // Trigger change detection
             },
             error => {

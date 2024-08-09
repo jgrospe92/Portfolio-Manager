@@ -288,5 +288,31 @@ def return_on_investment(portfolio_id):
         response.status_code = 400
     return response
 
+@app.route('/historical-data/<string:ticker>', methods=['GET'])
+def get_historical_data(ticker):
+    if not ticker:
+        return jsonify({'error': 'Ticker is required'}), 400
+
+    try:
+        stock = yf.Ticker(ticker)
+        hist = stock.history(period="2y")  # Fetch last 2 years of data
+        data = hist.reset_index().to_dict(orient='records')
+        result = [
+            {
+                'date': item['Date'].strftime('%Y-%m-%d'),
+                'open': item['Open'],
+                'high': item['High'],
+                'low': item['Low'],
+                'close': item['Close'],
+                'volume': item['Volume']
+            } for item in data
+        ]
+        print(jsonify(result))
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    
+
 if __name__ == '__main__':
     app.run(debug=True)

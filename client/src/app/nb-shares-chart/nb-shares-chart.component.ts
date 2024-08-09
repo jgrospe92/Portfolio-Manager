@@ -52,8 +52,11 @@ export class NbSharesChartComponent {
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['assets'].firstChange) {
-      this.updateChartDataPoints();
+    if (changes['assets']){
+
+      if (!changes['assets'].firstChange) {
+        this.updateChartDataPoints();
+      }
     }
   }
 

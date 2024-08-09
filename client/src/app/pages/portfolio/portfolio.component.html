@@ -1,5 +1,5 @@
 <div class="container-fluid mt-5 app_layout d-flex">
-  <app-pie-chart [assets]="rowData" class="chart-container"></app-pie-chart>
+  <app-pie-chart [assets]="rowData" (selectionChange)="onTickerSelection($event)" class="chart-container"></app-pie-chart>
 
   <div class="container mt-5 app_layout">
     <h2>Portfolio Manager</h2>
@@ -41,5 +41,4 @@
   <app-nb-shares-chart [assets]="rowData" class="chart-container" [realizedPnL]="realizedPnL" [unrealizedPnL]="unrealizedPnL"></app-nb-shares-chart>
 </div>
 
-<app-pie-chart [assets]="rowData" (selectionChange)="onTickerSelection($event)"></app-pie-chart>
-<app-line-chart [ticker]="selectedTicker"></app-line-chart>
+<app-line-chart [ticker]="selectedTicker" class="chart-container"></app-line-chart>
