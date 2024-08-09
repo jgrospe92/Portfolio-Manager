@@ -35,4 +35,5 @@
     <app-date-and-time></app-date-and-time>
   </footer>
 </div>
-<app-pie-chart [assets]="rowData"></app-pie-chart>
+<app-pie-chart [assets]="rowData" (selectionChange)="onTickerSelection($event)"></app-pie-chart>
+<app-line-chart [ticker]="selectedTicker"></app-line-chart>

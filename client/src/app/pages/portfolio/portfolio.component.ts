@@ -27,6 +27,8 @@ export class PortfolioComponent implements OnInit {
   realizedPnL: any = '';
   unrealizedPnL: any = '';
 
+  selectedTicker: string = ''; 
+
   constructor(
     private portfolio: PortfolioService,
     private user: UserService,
@@ -102,6 +104,13 @@ export class PortfolioComponent implements OnInit {
     this.getPortfolioRealizedPnL(this.selectedPortfolioId);
     this.getPortfolioUnrealizedPnL(this.selectedPortfolioId);
   }
+
+  onTickerSelection(event: { ticker: string, shares: number }) {
+    console.log(`Ticker selected: ${event.ticker}`);  // Debugging log
+    this.selectedTicker = event.ticker;  // Update the selected ticker
+    // You might also update the shares if necessary
+  }
+  
 
   private numberFormatter(value: any) {
     const formatter = new Intl.NumberFormat('en-US', {

@@ -4,26 +4,23 @@ import { DataService, HistoricalData } from 'src/app/services/data.service';
 @Component({
   selector: 'app-line-chart',
   templateUrl: './line-chart.component.html',
-  styleUrls: ['./line-chart.component.scss']
+  styleUrls: ['./line-chart.component.scss'],
+  providers: [DataService]
 })
 export class LineChartComponent implements OnInit, OnChanges {
   @Input() ticker!: string;
   dps: { x: Date, y: number }[] = [];
+
+  private baseUrl = 'https://www.alphavantage.co/query?'; // Add the baseUrl here
+  private apiKey = 'FEL6NGU9QU6ZQ0KQ'; // Add your API key here
 
   chartOptions = {
     theme: 'light2',
     zoomEnabled: true,
     exportEnabled: true,
     title: {
-      text: ''
+      text: 'Stock Closing Price'
     },
-    subtitles: [{
-      text: "Loading Data...",
-      fontSize: 24,
-      horizontalAlign: "center",
-      verticalAlign: "center",
-      dockInsidePlotArea: true
-    }],
     axisY: {
       title: 'Closing Price (in USD)',
       prefix: '$'
@@ -47,28 +44,29 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ticker'] && !changes['ticker'].firstChange) {
+      console.log('Ticker received:', this.ticker); // Log the received ticker
       this.fetchData();
     }
   }
+  
 
   fetchData(): void {
-    console.log(`Fetching data for ticker: ${this.ticker}`);
     if (this.ticker) {
-      this.dataService.getHistoricalData(this.ticker).subscribe(
-        (data: HistoricalData[]) => {
-          console.log('Data received:', data);
-          this.dps = data.map((item: HistoricalData) => ({
-            x: new Date(item.date),
-            y: item.close
-          }));
-          this.chartOptions.data[0].dataPoints = this.dps;
-          this.chartOptions.subtitles = []; 
-          this.chartOptions = { ...this.chartOptions }; 
-        },
-        error => {
-          console.error('Error fetching data:', error);
-        }
-      );
+        console.log('Fetching data for ticker:', this.ticker);
+
+        this.dataService.getHistoricalData(this.ticker).subscribe(
+            (data: HistoricalData[]) => {
+                this.dps = data.map((item: HistoricalData) => ({
+                    x: new Date(item.date), // The date
+                    y: item.close // Only the closing price
+                }));
+                this.chartOptions.data[0].dataPoints = this.dps;
+                this.chartOptions = { ...this.chartOptions }; // Trigger change detection
+            },
+            error => {
+                console.error('Error fetching data:', error);
+            }
+        );
     }
   }
 }

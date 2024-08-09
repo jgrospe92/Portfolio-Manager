@@ -35,9 +35,9 @@ import { SummaryComponent } from './pages/summary/summary.component';
   DateAndTimeComponent,
   BuyComponent,
   SellComponent,
-  LineChartComponent,
   PieChartComponent,
-  SummaryComponent,
+  LineChartComponent,
+  SummaryComponent
     ],
     bootstrap: [AppComponent], imports: [
       BrowserModule,
