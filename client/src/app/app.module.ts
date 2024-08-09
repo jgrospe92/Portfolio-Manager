@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -19,31 +19,36 @@ import { ModalComponent } from './components/modal/modal.component';
 import { DateAndTimeComponent } from './components/date-and-time/date-and-time.component';
 import { BuyComponent } from './components/buy/buy.component';
 import { SellComponent } from './components/sell/sell.component';
+import { LineChartComponent } from './components/line-chart/line-chart.component';
+import { PieChartComponent } from './components/pie-chart/pie-chart.component';
+import { SummaryComponent } from './pages/summary/summary.component';
+import { NbSharesChartComponent } from './nb-shares-chart/nb-shares-chart.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    PageNotFoundComponent,
-    NavComponent,
-    PortfolioComponent,
-    DatagridComponent,
-    DynamicBtnComponent,
-    ModalComponent,
-    DateAndTimeComponent,
-    BuyComponent,
-    SellComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgbModule,
-    AgGridAngular,
-    DropdownComponent,
-    HttpClientModule,
-    FormsModule,
-  ],
-  providers: [CommunicationService],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [
+  AppComponent,
+  HomeComponent,
+  PageNotFoundComponent,
+  NavComponent,
+  PortfolioComponent,
+  DatagridComponent,
+  DynamicBtnComponent,
+  ModalComponent,
+  DateAndTimeComponent,
+  BuyComponent,
+  SellComponent,
+  PieChartComponent,
+  NbSharesChartComponent,
+  LineChartComponent,
+  SummaryComponent
+    ],
+    bootstrap: [AppComponent], imports: [
+      BrowserModule,
+      AppRoutingModule,
+      NgbModule,
+      AgGridAngular,
+      DropdownComponent,
+      HttpClientModule,
+      FormsModule,
+      CanvasJSAngularChartsModule
+    ], providers: [CommunicationService, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {}

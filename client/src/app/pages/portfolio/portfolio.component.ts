@@ -23,9 +23,12 @@ export class PortfolioComponent implements OnInit {
   currentPortfolio!: string;
   currentUserFunds!: number;
   parentGrid!: any;
+  isSelected: boolean = false;
 
   realizedPnL: any = '';
   unrealizedPnL: any = '';
+
+  selectedTicker: string = ''; 
 
   constructor(
     private portfolio: PortfolioService,
@@ -101,7 +104,15 @@ export class PortfolioComponent implements OnInit {
     this.setRowData(this.selectedPortfolioId);
     this.getPortfolioRealizedPnL(this.selectedPortfolioId);
     this.getPortfolioUnrealizedPnL(this.selectedPortfolioId);
+    this.isSelected = true;
   }
+
+  onTickerSelection(event: { ticker: string, shares: number }) {
+    console.log(`Ticker selected: ${event.ticker}`);  // Debugging log
+    this.selectedTicker = event.ticker;  // Update the selected ticker
+    // You might also update the shares if necessary
+  }
+  
 
   private numberFormatter(value: any) {
     const formatter = new Intl.NumberFormat('en-US', {

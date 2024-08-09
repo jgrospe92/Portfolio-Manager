@@ -1,0 +1,19 @@
+<div class="dashboard">
+    <div class="chart-section">
+      <div class="chart-container">
+        <app-pie-chart (selectionChange)="onSelectionChange($event)"></app-pie-chart>
+      </div>
+      <div class="shares-info" *ngIf="selectedShares !== null">
+        <h3>{{selectedTicker}} Shares</h3>
+        <p>{{selectedShares}}</p>
+      </div>
+    </div>
+    <div class="chart-section">
+      <div class="chart-container">
+        <h3>{{selectedTicker}} Shares</h3>
+        <h1>HHHHHHHHHHHHHHHH</h1>
+        <app-line-chart [ticker]="selectedTicker"></app-line-chart>
+      </div>
+    </div>
+  </div>
+  
