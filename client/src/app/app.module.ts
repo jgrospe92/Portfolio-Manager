@@ -36,10 +36,10 @@ import { NbSharesChartComponent } from './nb-shares-chart/nb-shares-chart.compon
   DateAndTimeComponent,
   BuyComponent,
   SellComponent,
-  LineChartComponent,
   PieChartComponent,
-  SummaryComponent,
   NbSharesChartComponent,
+  LineChartComponent,
+  SummaryComponent
     ],
     bootstrap: [AppComponent], imports: [
       BrowserModule,

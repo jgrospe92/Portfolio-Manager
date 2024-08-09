@@ -14,9 +14,8 @@ export class SummaryComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  onSelectionChange(event: { ticker: string, shares: number }) {
+  onSelectionChange(event: { ticker: string }) {
     console.log(`Ticker selected: ${event.ticker}`);
     this.selectedTicker = event.ticker;
-    this.selectedShares = event.shares;
   }
 }

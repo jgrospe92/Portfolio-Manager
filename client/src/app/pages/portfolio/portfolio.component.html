@@ -40,7 +40,6 @@
   
   <app-nb-shares-chart [assets]="rowData" class="chart-container" [realizedPnL]="realizedPnL" [unrealizedPnL]="unrealizedPnL"></app-nb-shares-chart>
 </div>
-<div>
-  <app-line-chart></app-line-chart>
-</div>
-  
+
+<app-pie-chart [assets]="rowData" (selectionChange)="onTickerSelection($event)"></app-pie-chart>
+<app-line-chart [ticker]="selectedTicker"></app-line-chart>

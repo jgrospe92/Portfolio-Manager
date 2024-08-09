@@ -17,7 +17,7 @@ export interface HistoricalData {
 })
 export class DataService {
   private baseUrl = 'https://www.alphavantage.co/query?';
-  private apiKey = '2PQTYORUAMIEYQYN';
+  private apiKey = 'FEL6NGU9QU6ZQ0KQ';
 
   constructor(private http: HttpClient) {}
 
@@ -28,10 +28,15 @@ export class DataService {
       })
     };
 
-    const url = `${this.baseUrl}function=TIME_SERIES_DAILY&symbol=${ticker}&apikey=${this.apiKey}`;
+    const url = `${this.baseUrl}function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=${ticker}&apikey=${this.apiKey}`;
     return this.http.get<any>(url, httpOptions).pipe(
       map(response => {
-        const timeSeries = response['Time Series (Daily)'];
+        const timeSeries = response['Monthly Adjusted Time Series'];
+        if (!timeSeries) {
+          console.error('No Monthly Adjusted Time Series in API response');
+          return [];
+        }
+
         return Object.keys(timeSeries).map(date => ({
           date,
           open: parseFloat(timeSeries[date]['1. open']),
