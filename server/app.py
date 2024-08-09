@@ -1,10 +1,29 @@
 from flask import Flask, request, jsonify, Response
+from flask_swagger_ui import get_swaggerui_blueprint
+from flask_swagger import swagger
 from db_manager import *
 from flask_cors import CORS
 
 
 app = Flask(__name__)
 CORS(app)
+
+SWAGGER_URL = '/docs'
+API_URL = '/static/swagger.yaml'
+
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Portfolio Management API"
+    }
+)
+
+app.register_blueprint(swaggerui_blueprint, url_prefix="/docs")
+
+@app.route("/spec")
+def spec():
+    return jsonify(swagger(app))
 
 @app.route('/users', methods=['POST'])
 def create_user():
@@ -113,8 +132,6 @@ def buy_asset():
     quantity = float(data['quantity'])
     portfolio_id = int(data['portfolio_id'])
     price_per_unit = float(data["price"])
-    # price_per_unit = float(get_asset_price(ticker_symbol))
-    status_code = 0
     
     try:
         # Ensure asset is added to the Assets table

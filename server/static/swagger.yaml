@@ -1,0 +1,256 @@
+openapi: 3.0.0
+info:
+  title: Portfolio Manager API
+  description: A simple API to manage financial portfolio
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+paths:
+  /users:
+    get:
+      summary: Returns all users
+      responses:
+        "200":
+          description: Returns all users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    example:
+                      [
+                        {
+                          "created_at": "Tue, 06 Aug 2024 09:58:39 GMT",
+                          "email": "user1@example.com",
+                          "funds": 90000,
+                          "password": "password1",
+                          "user_id": 1,
+                          "username": "user1",
+                        },
+                      ]
+  /users/{user_id}:
+    get:
+      summary: Returns a user by ID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    example:
+                      {
+                        "created_at": "Tue, 06 Aug 2024 09:58:39 GMT",
+                        "email": "user1@example.com",
+                        "funds": 90000,
+                        "password": "password1",
+                        "user_id": 1,
+                        "username": "user1",
+                      }
+  /portfolios/{user_id}:
+    get:
+      summary: Returns all portfolios that belong to a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID of the user to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    example:
+                      [
+                        {
+                          "created_at": "Tue, 06 Aug 2024 09:58:39 GMT",
+                          "description": "A portfolio consisting of technology stocks",
+                          "name": "Tech Portfolio",
+                          "portfolio_id": 1,
+                          "profit": 1000.0,
+                          "user_id": 1,
+                        },
+                      ]
+  /assets/{portfolio_id}:
+    get:
+      summary: Returns all assets that belong to a portfolio
+      parameters:
+        - name: portfolio_id
+          in: path
+          required: true
+          description: ID of the portfolio to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    example:
+                      [
+                        {
+                          "asset_id": 1,
+                          "name": "Apple Inc.",
+                          "price": 150.0,
+                          "quantity": 10,
+                          "ticker_symbol": "AAPL",
+                          "type": "stock",
+                        },
+                      ]
+  /buy:
+    post:
+      summary: Buy a stock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                ticker_symbol:
+                  type: string
+                quantity:
+                  type: integer
+                portfolio_id:
+                  type: integer
+                price:
+                  type: number
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Stock bought successfully"
+  /sell:
+    post:
+      summary: Sell a stock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticker_symbol:
+                  type: string
+                quantity:
+                  type: integer
+                portfolio_id:
+                  type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Stock sold successfully"
+  /real_time_price/{ticker_symbol}:
+    get:
+      summary: Returns real time stock market price that match the given name
+      parameters:
+        - name: Ticker Symbol
+          in: path
+          required: true
+          description: Name of the asset to return
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    example:
+                      [
+                        {
+                          "asset_id": 1,
+                          "name": "Apple Inc.",
+                          "price": 150.0,
+                          "quantity": 10,
+                          "ticker_symbol": "AAPL",
+                          "type": "stock",
+                        },
+                      ]
+  /realized_profit_loss/{portfolio_id}:
+    get:
+      summary: Returns the realized profit or loss of a portfolio
+      parameters:
+        - name: portfolio_id
+          in: path
+          required: true
+          description: ID of the portfolio to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  realized_profit_loss:
+                    type: number
+                    example: 1000.0
+  /unrealized_profit_loss/{portfolio_id}:
+    get:
+      summary: Returns the unrealized profit or loss of a portfolio
+      parameters:
+        - name: portfolio_id
+          in: path
+          required: true
+          description: ID of the portfolio to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  unrealized_profit_loss:
+                    type: number
+                    example: 1000.0
