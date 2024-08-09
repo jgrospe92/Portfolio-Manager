@@ -13,6 +13,7 @@
   - [How to Run the Application](#how-to-run-the-application)
     - [Database](#database)
     - [Backend Server (Python 3.10^)](#backend-server-python-310)
+    - [Swagger-UI (API Documentation)](#swagger-ui-api-documentation)
     - [Front end (Angular 14)](#front-end-angular-14)
   - [Team 2](#team-2)
 
@@ -71,6 +72,9 @@ pip install -r requirements.txt
 python app.py
 
 ```
+
+### Swagger-UI (API Documentation)
+<img src="/client/src/assets/images/swagger-ui.png" alt="swagger ui" width="500">
 
 ### Front end (Angular 14)
 ```
