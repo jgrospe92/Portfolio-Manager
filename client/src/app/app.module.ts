@@ -22,6 +22,7 @@ import { SellComponent } from './components/sell/sell.component';
 import { LineChartComponent } from './components/line-chart/line-chart.component';
 import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { SummaryComponent } from './pages/summary/summary.component';
+import { NbSharesChartComponent } from './nb-shares-chart/nb-shares-chart.component';
 
 @NgModule({ declarations: [
   AppComponent,
@@ -38,6 +39,7 @@ import { SummaryComponent } from './pages/summary/summary.component';
   LineChartComponent,
   PieChartComponent,
   SummaryComponent,
+  NbSharesChartComponent,
     ],
     bootstrap: [AppComponent], imports: [
       BrowserModule,

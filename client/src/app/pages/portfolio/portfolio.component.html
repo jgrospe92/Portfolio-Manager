@@ -1,38 +1,46 @@
-<!-- The AG Grid component -->
-<div class="container mt-5 app_layout">
-  <h2>Portfolio Manager</h2>
-  <div class="portfolio_layout">
-    <app-dropdown
-      [items]="dropdownItems"
-      (itemSelected)="onSelectedPortfolio($event)"
-    ></app-dropdown>
-    <div class="portfolio_PnL m-0">
-      <p>Total Realized PnL : {{ realizedPnL }}</p>
-      <p>
-        Total Unrealized PnL :
-        <span [ngClass]="unrealizedPnL < 0 ? 'text-danger' : 'text-success'">{{
-          unrealizedPnL
-        }}</span>
-      </p>
+<div class="container-fluid mt-5 app_layout d-flex">
+  <app-pie-chart [assets]="rowData" class="chart-container"></app-pie-chart>
+
+  <div class="container mt-5 app_layout">
+    <h2>Portfolio Manager</h2>
+    <div class="portfolio_layout">
+      <app-dropdown
+        [items]="dropdownItems"
+        (itemSelected)="onSelectedPortfolio($event)"
+      ></app-dropdown>
+      <div class="portfolio_PnL m-0">
+        <p>Total Realized PnL : {{ realizedPnL }}</p>
+        <p>
+          Total Unrealized PnL :
+          <span [ngClass]="unrealizedPnL < 0 ? 'text-danger' : 'text-success'">{{
+            unrealizedPnL
+          }}</span>
+        </p>
+      </div>
+      <app-modal
+        [parentGridApi]="parentGrid"
+        [isBuyValid]="userCanBuy"
+      ></app-modal>
     </div>
-    <app-modal
-      [parentGridApi]="parentGrid"
-      [isBuyValid]="userCanBuy"
-    ></app-modal>
-  </div>
-  <div class="mt-2">
-    <app-datagrid
-      [currentPortfolio]="currentPortfolio"
-      [rowData]="rowData"
-      (parentGrid)="getParentGridApi($event)"
-    ></app-datagrid>
-  </div>
-  <footer>
-    <div class="d-flex">
-      <p>Login as {{ currentUser }}</p>
-      <p class="ms-2">Balance : {{ currentUserFunds }}</p>
+    <div class="mt-2">
+      <app-datagrid
+        [currentPortfolio]="currentPortfolio"
+        [rowData]="rowData"
+        (parentGrid)="getParentGridApi($event)"
+      ></app-datagrid>
     </div>
-    <app-date-and-time></app-date-and-time>
-  </footer>
+    <footer>
+      <div class="d-flex">
+        <p>Login as {{ currentUser }}</p>
+        <p class="ms-2">Balance : {{ currentUserFunds }}</p>
+      </div>
+      <app-date-and-time></app-date-and-time>
+    </footer>
+  </div>
+  
+  <app-nb-shares-chart [assets]="rowData" class="chart-container" [realizedPnL]="realizedPnL" [unrealizedPnL]="unrealizedPnL"></app-nb-shares-chart>
 </div>
-<app-pie-chart [assets]="rowData"></app-pie-chart>
+<div>
+  <app-line-chart></app-line-chart>
+</div>
+  

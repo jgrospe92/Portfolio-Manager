@@ -23,6 +23,7 @@ export class PortfolioComponent implements OnInit {
   currentPortfolio!: string;
   currentUserFunds!: number;
   parentGrid!: any;
+  isSelected: boolean = false;
 
   realizedPnL: any = '';
   unrealizedPnL: any = '';
@@ -101,6 +102,7 @@ export class PortfolioComponent implements OnInit {
     this.setRowData(this.selectedPortfolioId);
     this.getPortfolioRealizedPnL(this.selectedPortfolioId);
     this.getPortfolioUnrealizedPnL(this.selectedPortfolioId);
+    this.isSelected = true;
   }
 
   private numberFormatter(value: any) {
