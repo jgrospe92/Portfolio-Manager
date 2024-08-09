@@ -8,8 +8,8 @@ import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/
 export class NbSharesChartComponent {
   @Output() selectionChange = new EventEmitter<{ ticker: string, shares: number }>();
   @Input() assets: any[] = [];
-  @Input() realizedPnL: any = 1;
-  @Input() unrealizedPnL: any = -1;
+  @Input() realizedPnL: any = 10000;
+  @Input() unrealizedPnL: any = 2000;
   datapoint: { y: number; name: string }[] = [];
 
   chartOptions = {
@@ -28,21 +28,35 @@ export class NbSharesChartComponent {
 
   barChartOptions = {
     title: {
-      text: "Realized PnL vs UnRealized PnL"  
+      text: "Realized PnL vs UnRealized PnL"
     },
     animationEnabled: true,
     axisX: {
       valueFormatString: " "
     },
-    data: [{        
-      type: "column",
-      dataPoints: [
-        { label: "Realized PnL", y: this.realizedPnL },
-        { label: "UnRealized PnL", y: this.unrealizedPnL }
-      ]
-    }]
+    axisY: {
+      title: "PnL Amount"
+    },
+    data: [
+      {        
+        type: "stackedColumn",
+        name: "Realized PnL",
+        showInLegend: true,
+        dataPoints: [
+          { label: "Realized PnL", y: this.realizedPnL }
+        ]
+      },
+      {        
+        type: "stackedColumn",
+        name: "UnRealized PnL",
+        showInLegend: true,
+        dataPoints: [
+          { label: "UnRealized PnL", y: this.unrealizedPnL }
+        ]
+      }
+    ]
   };
-
+  
   onPieClick(e: { dataPoint: { name: string, shares: number } }): void {
     const ticker = e.dataPoint.name;
     const shares = e.dataPoint.shares;
@@ -82,14 +96,26 @@ export class NbSharesChartComponent {
 
     this.barChartOptions = {
       ...this.barChartOptions,
-      data: [{
-        ...this.barChartOptions.data[0],
-        dataPoints: [
-          { label: "Realized PnL", y: Number(this.realizedPnL) },
-          { label: "UnRealized PnL", y: Number(this.unrealizedPnL) }
-        ]
-      }]
+      data: [
+        {
+          type: "stackedColumn",
+          name: "Realized PnL",
+          showInLegend: true,
+          dataPoints: [
+            { label: "PnL", y: Number(this.realizedPnL) }
+          ]
+        },
+        {
+          type: "stackedColumn",
+          name: "UnRealized PnL",
+          showInLegend: true,
+          dataPoints: [
+            { label: "PnL", y: Number(this.unrealizedPnL) }
+          ]
+        }
+      ]
     };
+    
   }
 
 
